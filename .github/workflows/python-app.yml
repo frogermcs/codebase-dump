@@ -2,11 +2,9 @@ name: Python Package
 
 on:
   push:
-    tags:
-      - "v*"
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
   build:
