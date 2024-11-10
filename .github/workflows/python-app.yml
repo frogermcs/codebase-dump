@@ -33,3 +33,11 @@ jobs:
       - name: Build package
         run: |
           python setup.py sdist bdist_wheel
+
+      - name: Publish to Test PyPI
+        # if: startsWith(github.ref, 'refs/tags')
+        env:
+          TWINE_USERNAME: ${{ secrets.TEST_PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.TEST_PYPI_PASSWORD }}
+        run: |
+          python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
