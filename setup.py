@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="codebase-dump",
-    version="0.1.2",
+    version="0.1.3",
     description="Generate a single-file dump of your repository, so you can use it as LLM input",
     author="Mirek Stanek, Kamil Stanuch",
     author_email="mirek@practicalengineering.management, kamil@stanuch.eu",
@@ -12,5 +12,9 @@ setup(
     extras_require={
         "dev": ["pytest", "twine"]  # Development dependencies
     },
+    entry_points={
+    'console_scripts': [
+        'codebase-dump = codebase-dump.main:main',
+    ]},
     python_requires=">=3.7",
 )
