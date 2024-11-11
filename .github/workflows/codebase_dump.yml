@@ -1,7 +1,7 @@
-name: Generate and Save TXT File
+name: Generate Project Dump for LLM
 
 on:
-  workflow_dispatch:  # Allows you to trigger the workflow manually
+  workflow_dispatch:
 
 jobs:
   generate-file:
@@ -16,13 +16,14 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Generate TXT file
-        run: |
-          echo "This is a generated file." > result.txt
-          echo "Additional content for the file." >> result.txt
+      - name: Install Codebase Dump
+        run: pip install codebase-dump
 
-      - name: Upload TXT file as an artifact
+      - name: Generate Single-File Prompt for LLM
+        run: codebase-dump . -f project_dump_for_llm.md -o markdown 
+
+      - name: Upload Prompt File as Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: generated-txt-file  # Name the artifact
-          path: result.txt          # Specify the file to upload
+          name: project_dump_for_llm.md
+          path: project_dump_for_llm.md
