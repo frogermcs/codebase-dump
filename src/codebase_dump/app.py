@@ -6,7 +6,7 @@ from codebase_dump.core.ignore_patterns_manager import IgnorePatternManager
 from codebase_dump.core.codebase_analysis import CodebaseAnalysis
 from codebase_dump.core.output_formatter import OutputFormatterBase, MarkdownOutputFormatter, PlainTextOutputFormatter
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         description="Generate a single-file dump of your repository, so you can use it as LLM input.",
         formatter_class=argparse.RawTextHelpFormatter
@@ -66,3 +66,6 @@ if __name__ == "__main__":
     print("Analysis Summary\n")
     print(output_formatter.generate_tree_string(data))
     print(output_formatter.generate_summary_string(data))
+
+if __name__ == "__main__":
+    main()
