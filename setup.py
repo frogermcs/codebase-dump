@@ -14,7 +14,7 @@ setup(
     },
     entry_points={
     'console_scripts': [
-        'codebase-dump = codebase-dump.main:main',
+        'codebase-dump=codebase_dump.main:main',
     ]},
     python_requires=">=3.7",
 )
