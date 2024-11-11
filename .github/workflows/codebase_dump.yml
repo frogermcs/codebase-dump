@@ -1,0 +1,28 @@
+name: Generate and Save TXT File
+
+on:
+  workflow_dispatch:  # Allows you to trigger the workflow manually
+
+jobs:
+  generate-file:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+
+      - name: Generate TXT file
+        run: |
+          echo "This is a generated file." > result.txt
+          echo "Additional content for the file." >> result.txt
+
+      - name: Upload TXT file as an artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: generated-txt-file  # Name the artifact
+          path: result.txt          # Specify the file to upload
