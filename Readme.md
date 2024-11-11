@@ -47,6 +47,15 @@ For example, to generate a markdown file of your project’s code structure:
 codebase-dump . -f project_dump_for_llm.md -o markdown
 ```
 
+### Available Arguments
+
+| Option | Description |
+|--------|-------------|
+| `path_to_directory` | Path to the directory you want to analyze |
+| `-o, --output-format` | Output format (text, markdown). Default: text |
+| `-f, --file` | Output file name |
+| `--max-size` | Maximum allowed text content size in KB (default: 10240 KB) |
+
 ### From Source
 
 You can also run codebase-dump directly from the source code:
@@ -96,3 +105,9 @@ In this example:
 - The workflow is triggered manually with workflow_dispatch.
 - It installs codebase-dump and generates a .md file named project_dump_for_llm.md, containing the code structure and summary.
 - The generated file is then uploaded as an artifact for easy access and download.
+
+## What next?
+
+Once you get your codebase dump, copy that into one of LLMs as input prompt and start asking Gemini, ChatGPT, Claude and others questions related to your codebase. For example, ask about "what are suggested steps to refactor this code into //your choice// architecture.". 
+
+For inspiration on possible prompts, check [LLM Prompts section](https://github.com/kamilstanuch/codebase-digest?tab=readme-ov-file#llm-prompts-for-enhanced-analysis) in the Codebase Digest repository.
