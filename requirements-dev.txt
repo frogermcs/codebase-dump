@@ -1,5 +1,0 @@
-twine
-packaging
-setuptools
-pytest
-wheel
