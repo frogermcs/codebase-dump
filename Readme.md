@@ -14,7 +14,7 @@ For inspiration on possible prompts, refer to the [LLM Prompts section](https://
 
 ### Option 1: Install via pip
 
-You can install Codebase Dump directly from PyPI:
+You can install codebase-dump directly from PyPI:
 
 ```bash
 pip install codebase-dump
@@ -35,7 +35,7 @@ I recommend opening this project in Visual Studio Code and setting up a virtual 
 ## Usage
 
 ### Command Line
-Once installed, you can run Codebase Dump from the command line:
+Once installed, you can run codebase-dump from the command line:
 
 ```bash
 codebase-dump <path_to_codebase> -f <output_filename> -o <output_format>
@@ -49,14 +49,14 @@ codebase-dump . -f project_dump_for_llm.md -o markdown
 
 ### From Source
 
-You can also run Codebase Dump directly from the source code:
+You can also run codebase-dump directly from the source code:
 
 ```bash
 python app.py <path_to_codebase> -f <output_filename> -o <output_format>
 ```
 
 ### Usage in GitHub Actions
-You can automate Codebase Dump in a GitHub Actions workflow to generate and save the code dump as an artifact. Here’s an example workflow configuration (working example available in this own repository: [.github/workflows/codebase_dump.yml](main/.github/workflows/codebase_dump.yml)).
+You can automate codebase-dump in a GitHub Actions workflow to generate and save the code dump as an artifact. Here’s an example workflow configuration (working example available in this own repository: [.github/workflows/codebase_dump.yml](.github/workflows/codebase_dump.yml)).
 
 
 ```yaml
@@ -78,7 +78,7 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install Codebase Dump
+      - name: Install codebase-dump
         run: pip install codebase-dump
 
       - name: Generate Single-File Prompt for LLM
@@ -94,5 +94,5 @@ jobs:
 In this example:
 
 - The workflow is triggered manually with workflow_dispatch.
-- It installs Codebase Dump and generates a .md file named project_dump_for_llm.md, containing the code structure and summary.
+- It installs codebase-dump and generates a .md file named project_dump_for_llm.md, containing the code structure and summary.
 - The generated file is then uploaded as an artifact for easy access and download.
