@@ -64,6 +64,12 @@ You can also run codebase-dump directly from the source code:
 python app.py <path_to_codebase> -f <output_filename> -o <output_format>
 ```
 
+### Try online with Google Colab
+
+You can try codebase-dump in an online environment, Google Colab. It can be a good option if you don't have a Python environment on your computer. Just launch it here: [codebase-dump Colab](https://colab.research.google.com/drive/1dchobm2d5V8vYBYtlMVosP7jGeDKhDiJ?usp=sharing). To test it out, run all the code via Runtime -> Run All.
+
+
+
 ### Usage in GitHub Actions
 You can automate codebase-dump in a GitHub Actions workflow to generate and save the code dump as an artifact. Here’s an example workflow configuration (working example available in this own repository: [.github/workflows/codebase_dump.yml](.github/workflows/codebase_dump.yml)).
 
