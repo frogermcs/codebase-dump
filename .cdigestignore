@@ -1,0 +1,3 @@
+# Files to ignore by codebase-dump
+./output
+.DS_Store

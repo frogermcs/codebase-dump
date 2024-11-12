@@ -59,6 +59,7 @@ def main():
     # Save the output to a file
     file_name = args.file or f"{os.path.basename(args.path)}_codebase_dump{output_formatter.output_file_extension()}"
     full_path = os.path.abspath(file_name)
+    os.makedirs(os.path.dirname(full_path), exist_ok=True)
     with open(full_path, 'w', encoding='utf-8') as f:
         f.write(output)
     print(f"\nAnalysis saved to: {full_path}")
