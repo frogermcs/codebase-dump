@@ -1,6 +1,5 @@
 import os
-import fnmatch
-import re
+import gitignore_parser
 
 # TODO: Add support for negation patterns
 class IgnorePatternManager:
@@ -31,73 +30,50 @@ class IgnorePatternManager:
         self.load_cdigestignore = load_cdigestignore
         self.extra_ignore_patterns = extra_ignore_patterns
 
-        self.ignore_patterns = set()
         self.ignore_patterns_as_str = set()
+        self.ignore_rules = set()
 
         self.init_ignore_patterns()
 
 
     def init_ignore_patterns(self):
-        self.ignore_patterns = set()
-
+        """Initializes the ignore patterns based on the configuration."""
         if self.load_default_ignore_patterns:
             for pattern in IgnorePatternManager.DEFAULT_IGNORE_PATTERNS:
                 self.ignore_patterns_as_str.add(pattern)
-                self.ignore_patterns.add(self.str_to_regex(pattern))
+                rule = gitignore_parser.rule_from_pattern(pattern)
+                self.ignore_rules.add(rule)
         
         if self.extra_ignore_patterns:
             for pattern in self.extra_ignore_patterns:
                 self.ignore_patterns_as_str.add(pattern)
-                self.ignore_patterns.add(self.str_to_regex(pattern))
+                rule = gitignore_parser.rule_from_pattern(pattern, base_path=self.base_path)
+                self.ignore_rules.add(rule)
         
         cdigestignore_path = os.path.join(self.base_path, '.cdigestignore')
         if self.load_cdigestignore and os.path.exists(cdigestignore_path):
-            regex_patterns, string_patterns = self.parse_gitignore(cdigestignore_path)
-            self.ignore_patterns_as_str.update(string_patterns)
-            self.ignore_patterns.update(regex_patterns)
+            self.parse_gitignore(cdigestignore_path)
         
         gitignore_path = os.path.join(self.base_path, '.gitignore')
         if self.load_gitignore and os.path.exists(gitignore_path):
-            regex_patterns, string_patterns = self.parse_gitignore(gitignore_path)
-            self.ignore_patterns_as_str.update(string_patterns)
-            self.ignore_patterns.update(regex_patterns)
-
-    
+            self.parse_gitignore(gitignore_path)
+        
     def parse_gitignore(self, gitignore_path=".gitignore"):
         """Parses a .gitignore file and returns a list of compiled regex patterns."""
-        regex_patterns = []
-        string_patterns = []
         with open(gitignore_path, "r") as f:
             for line in f:
                 line = line.strip()
                 if not line or line.startswith("#"):
                     continue
                 
-                string_patterns.append(line)
-                regex_patterns.append(self.str_to_regex(line))
-        return regex_patterns, string_patterns
+                rule = gitignore_parser.rule_from_pattern(line, base_path=self.base_path)
+                self.ignore_rules.add(rule)
+                self.ignore_patterns_as_str.add(line)
 
-    def str_to_regex(self, pattern):
-        """Converts a glob pattern to a regex pattern."""
-        if pattern is None:
-            return None
-
-        is_directory_pattern = pattern.endswith("/")
-
-        regex = re.escape(pattern).replace(r"\*", ".*").replace(r"\?", ".")
-
-        if is_directory_pattern:
-            # Match directories by ensuring a trailing slash or end of path
-            regex = f"(?:.*/)?{regex.rstrip('/')}/?$"
-        else:
-            # Match regular files or paths
-            regex = f"(?:.*/)?{regex}(?:/.*)?$"
-
-        return re.compile(regex)
-
-    def should_ignore(self, path, base_path):
-        """Checks if a file or directory should be ignored based on patterns."""
-        for pattern in self.ignore_patterns:
-            if pattern.match(path):
-                return True
+    def should_ignore(self, path, basepath):
+        if self.ignore_rules:
+            for rule in self.ignore_rules:
+                if rule and rule.match(path):
+                    return True
+        
         return False

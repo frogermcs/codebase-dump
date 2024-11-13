@@ -30,8 +30,6 @@ def main():
     ignore_patterns_manager = IgnorePatternManager(args.path)
     codebase_analysis = CodebaseAnalysis()
 
-    print(f"Debug: Ignore patterns after load_ignore_patterns: {ignore_patterns_manager.ignore_patterns}")
-
     print("Codebase Digest")
     print("Analyzing directory: " + args.path)
     
