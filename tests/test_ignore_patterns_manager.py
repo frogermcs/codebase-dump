@@ -68,50 +68,50 @@ class TestIgnorePatternsManager(unittest.TestCase):
             manager = IgnorePatternManager("/test", load_default_ignore_patterns=False,
                                         load_gitignore=False, load_cdigestignore=False,
                                         extra_ignore_patterns={"test.txt"})
-            self.assertTrue(manager.should_ignore("/test/test.txt", "/test"))
-            self.assertFalse(manager.should_ignore("/test/other.txt", "/test"))
+            self.assertTrue(manager.should_ignore("/test/test.txt"))
+            self.assertFalse(manager.should_ignore("/test/other.txt"))
 
         def test_should_ignore_relative_path(self):
             manager = IgnorePatternManager("/test", load_default_ignore_patterns=False,
                                         load_gitignore=False, load_cdigestignore=False,
                                         extra_ignore_patterns={"sub/test.txt"})
-            self.assertTrue(manager.should_ignore("/test/sub/test.txt", "/test"))
-            self.assertFalse(manager.should_ignore("/test/sub/other.txt", "/test"))
-            self.assertFalse(manager.should_ignore("/test/test.txt", "/test")) # Test that only the relative path is matched
+            self.assertTrue(manager.should_ignore("/test/sub/test.txt"))
+            self.assertFalse(manager.should_ignore("/test/sub/other.txt"))
+            self.assertFalse(manager.should_ignore("/test/test.txt"))
 
         def test_should_ignore_leading_slash_absolute_path(self):
             base_path = os.path.abspath("/test")  # Get absolute path            
             manager = IgnorePatternManager("/test", load_default_ignore_patterns=False,
                                         load_gitignore=False, load_cdigestignore=False,
                                         extra_ignore_patterns={"sub/test.txt"})
-            self.assertTrue(manager.should_ignore(os.path.join(base_path, "sub/test.txt"), base_path))
-            self.assertFalse(manager.should_ignore(os.path.join(base_path, "sub/other.txt"), base_path))
-            self.assertFalse(manager.should_ignore(os.path.join(base_path, "test.txt"), base_path))
+            self.assertTrue(manager.should_ignore(os.path.join(base_path, "sub/test.txt")))
+            self.assertFalse(manager.should_ignore(os.path.join(base_path, "sub/other.txt")))
+            self.assertFalse(manager.should_ignore(os.path.join(base_path, "test.txt")))
 
         def test_ignore_directory_pattern(self):
             manager = IgnorePatternManager("/test", load_default_ignore_patterns=False,
                                             load_gitignore=False, load_cdigestignore=False,
                                             extra_ignore_patterns={"sub/"})
-            self.assertTrue(manager.should_ignore("/test/sub", "/test"))
-            self.assertFalse(manager.should_ignore("/test/sub.txt", "/test"))
+            self.assertTrue(manager.should_ignore("/test/sub"))
+            self.assertFalse(manager.should_ignore("/test/sub.txt"))
 
         def test_ignore_recursive_wildcard_pattern(self):
             manager = IgnorePatternManager("/test", load_default_ignore_patterns=False,
                                             load_gitignore=False, load_cdigestignore=False,
                                             extra_ignore_patterns={"**/logs", "**/*.tmp"})
-            self.assertTrue(manager.should_ignore("/test/logs", "/test"))
-            self.assertTrue(manager.should_ignore("/test/sub/logs", "/test"))
-            self.assertTrue(manager.should_ignore("/test/sub/file.tmp", "/test"))
-            self.assertFalse(manager.should_ignore("/test/sub/file.txt", "/test"))
+            self.assertTrue(manager.should_ignore("/test/logs"))
+            self.assertTrue(manager.should_ignore("/test/sub/logs"))
+            self.assertTrue(manager.should_ignore("/test/sub/file.tmp"))
+            self.assertFalse(manager.should_ignore("/test/sub/file.txt"))
 
         def test_empty_pattern_handling(self):
             manager = IgnorePatternManager("/test", load_default_ignore_patterns=False,
                                             load_gitignore=False, load_cdigestignore=False,
                                             extra_ignore_patterns={"", "# Comment only"})
-            self.assertFalse(manager.should_ignore("/test/file.txt", "/test"))  # No patterns should ignore anything
+            self.assertFalse(manager.should_ignore("/test/file.txt"))  # No patterns should ignore anything
 
         def test_should_ignore_directory_inside_bug_test(self):
             manager = IgnorePatternManager("/Users/aaa/dev/workspace/typescript/repo-analysis-app", load_default_ignore_patterns=False,
                                         load_gitignore=False, load_cdigestignore=False,
                                         extra_ignore_patterns={"/.next/"}) 
-            self.assertTrue(manager.should_ignore("/Users/aaa/dev/workspace/typescript/repo-analysis-app/.next/static/chunks/pages/_app-6a626577ffa902a4.js", "/Users/frogermcs/dev/workspace/typescript/repo-analysis-app"))
+            self.assertTrue(manager.should_ignore("/Users/aaa/dev/workspace/typescript/repo-analysis-app/.next/static/chunks/pages/_app-6a626577ffa902a4.js"))

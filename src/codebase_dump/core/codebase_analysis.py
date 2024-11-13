@@ -43,7 +43,7 @@ class CodebaseAnalysis:
             for item in os.listdir(path):                
                 item_path = os.path.join(path, item)
                 
-                is_ignored = ignore_patterns_manager.should_ignore(item_path, base_path)
+                is_ignored = ignore_patterns_manager.should_ignore(item_path)
                 print(f"Debug: Checking {item_path}, ignored: {is_ignored}")  # Debug line
 
                 if os.path.isfile(item_path) and self.is_text_file(item_path):

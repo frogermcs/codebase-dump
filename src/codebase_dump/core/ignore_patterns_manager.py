@@ -2,6 +2,7 @@ import os
 import gitignore_parser
 
 # TODO: Add support for negation patterns
+
 class IgnorePatternManager:
 
     DEFAULT_IGNORE_PATTERNS = [
@@ -70,7 +71,7 @@ class IgnorePatternManager:
                 self.ignore_rules.add(rule)
                 self.ignore_patterns_as_str.add(line)
 
-    def should_ignore(self, path, basepath):
+    def should_ignore(self, path):
         if self.ignore_rules:
             for rule in self.ignore_rules:
                 if rule and rule.match(path):
