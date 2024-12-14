@@ -4,7 +4,9 @@ import os
 
 from codebase_dump.core.ignore_patterns_manager import IgnorePatternManager
 from codebase_dump.core.codebase_analysis import CodebaseAnalysis
+from codebase_dump.core.audit_api_uploader import AuditApiUploader
 from codebase_dump.core.output_formatter import OutputFormatterBase, MarkdownOutputFormatter, PlainTextOutputFormatter
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -15,6 +17,7 @@ def main():
     parser.add_argument("--max-size", type=int, default=10240, help="Maximum allowed text content size in KB (default: 10240 KB)")
     parser.add_argument("-o", "--output-format", choices=["text", "markdown"], default="text", help="Output format (default: text)")
     parser.add_argument("-f", "--file", help="Output file name (default: <directory_name>_codebase_dump.<format_extension>)")
+    parser.add_argument("--audit-upload", help="Send the output to the audits API", action="store_true")
     
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
@@ -65,6 +68,15 @@ def main():
     print("Analysis Summary\n")
     print(output_formatter.generate_tree_string(data))
     print(output_formatter.generate_summary_string(data))
+
+    if args.audit_upload:
+        print("Uploading to audits API...")
+        audit_api_uploader = AuditApiUploader(
+            api_key="XXXXXX",
+            api_url="https://repo-analysis-app.vercel.app/api/repo/add"
+        )
+        audit_api_uploader.upload_audit(output)
+        print("Upload complete.")
 
 if __name__ == "__main__":
     main()

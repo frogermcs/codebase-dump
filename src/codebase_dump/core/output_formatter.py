@@ -65,7 +65,7 @@ class PlainTextOutputFormatter(OutputFormatterBase):
         return ".txt"
     
     def format(self, data: DirectoryAnalysis) -> str:
-        output = f"Codebase Analysis for: {data.name}\n"
+        output = f"Codebase dump for the project: {data.name}\n"
         output += "\nDirectory Structure:\n"
         output += self.generate_tree_string(data, show_size=True, show_ignored=True)
         output += self.generate_summary_string(data)
@@ -83,7 +83,7 @@ class MarkdownOutputFormatter(OutputFormatterBase):
         return ".md"
     
     def format(self, data: DirectoryAnalysis) -> str:
-        output = f"# Codebase Analysis for: {data.name}\n\n"
+        output = f"# Codebase dump for the project: {data.name}\n\n"
         output += "## Directory Structure\n\n"
         output += "```\n"
         output += self.generate_tree_string(data, show_size=True, show_ignored=True)
