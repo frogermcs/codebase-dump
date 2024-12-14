@@ -20,7 +20,7 @@ jobs:
         run: pip install codebase-dump
 
       - name: Generate Single-File Prompt for LLM
-        run: codebase-dump . -f project_dump_for_llm.md -o markdown 
+        run: codebase-dump . -f project_dump_for_llm.md -o markdown --audit-upload
 
       - name: Upload Prompt File as Artifact
         uses: actions/upload-artifact@v3
