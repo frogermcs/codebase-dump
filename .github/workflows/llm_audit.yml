@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  generate-file:
+  codebase-for-audit:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +20,18 @@ jobs:
         run: pip install codebase-dump
 
       - name: Generate Single-File Prompt for LLM
-        run: codebase-dump . -f project_dump_for_llm.md -o markdown --audit-upload
+        run: codebase-dump . -f project_dump_for_llm.md -o markdown --audit-upload >> audit.log
+
+      - name: Extract audit URL
+        id: extract_audit_url
+        run: |
+          # Locate the JSON line, convert single quotes to double quotes, and extract 'url' using jq
+          url=$(grep '^{' audit.log | sed "s/'/\"/g" | jq -r '.url')
+          echo "url=$url" >> $GITHUB_OUTPUT
+
+      - name: Add URL to summary
+        run: |
+          echo "Audit URL: ${{ steps.extract_audit_url.outputs.url }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Upload Prompt File as Artifact
         uses: actions/upload-artifact@v3
