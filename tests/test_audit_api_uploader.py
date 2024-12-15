@@ -1,6 +1,6 @@
 import unittest
 from codebase_dump.core.audit_api_uploader import AuditApiUploader
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, Mock, MagicMock
 from io import StringIO
 import sys
 
@@ -19,37 +19,34 @@ class TestAuditApiUploader(unittest.TestCase):
             uploader.upload_audit(audit="")
         self.assertIn("Repo content is required", str(context.exception))
 
-    @patch('requests.post')
-    def test_upload_success(self, mock_post):
-        """Test a successful upload."""
-        # Setup mock response
-        mock_response = MagicMock()
+    @patch("requests.post")
+    def test_upload_audit_successful(self, mock_post):
+        """Test uploading an audit successfully when the server responds with a 200 status code."""
+        # Mock the response
+        mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.text = "12345"
+        mock_response.json.return_value = {"uploaded": True, "id": "12345"}
         mock_post.return_value = mock_response
 
         uploader = AuditApiUploader(api_key="test_key", api_url="http://example.com/upload")
-        
-        # Capture stdout to verify print statements
-        captured_output = StringIO()
-        sys.stdout = captured_output
 
-        uploader.upload_audit(audit="This is a test audit.")
-        
-        # Restore stdout
-        sys.stdout = sys.__stdout__
+        # We patch print to ensure we can verify calls (optional)
+        with patch("builtins.print") as mock_print:
+            uploader.upload_audit("Sample audit content")
 
-        # Verify requests.post call
-        mock_post.assert_called_once_with(
-            "http://example.com/upload",
-            json={"text": "This is a test audit."},
-            headers={"x-api-key": "test_key"}
-        )
+            # Ensure the POST request was made as expected
+            mock_post.assert_called_once_with(
+                "http://example.com/upload",
+                json={"text": "Sample audit content"},
+                headers={"x-api-key": "test_key"}
+            )
 
-        # Check output content
-        output = captured_output.getvalue()
-        self.assertIn("Audit uploaded successfully", output)
-        self.assertIn("Audit ID: 12345", output)
+            # Check print calls
+            print_calls = [call[0][0] for call in mock_print.call_args_list]
+            self.assertIn("Uploading to audits API...", print_calls)
+            self.assertIn("Audit uploaded successfully", print_calls)
+            self.assertIn("Audit info:", print_calls)
+            self.assertIn({"uploaded": True, "id": "12345"}, print_calls)
 
     @patch('requests.post')
     def test_upload_failure(self, mock_post):
