@@ -11,7 +11,9 @@ class AuditApiUploader:
     def upload_audit(self, audit: str):
         if not audit:
             raise ValueError("Repo content is required to upload")
-        
+
+        print("Uploading to audits API...")        
+
         headers = {
             "x-api-key": self.api_key,
         }
@@ -22,8 +24,10 @@ class AuditApiUploader:
         response = requests.post(self.api_url, 
                                  json=payload,
                                  headers=headers)
+        
         if response.status_code != 200:
             raise ValueError(f"Failed to upload audit: {response.text}")
         
         print("Audit uploaded successfully")
-        print(f"Audit ID: {response.text}")
+        print(f"Audit info:")
+        print(response.json())

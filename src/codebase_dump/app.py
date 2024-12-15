@@ -70,13 +70,11 @@ def main():
     print(output_formatter.generate_summary_string(data))
 
     if args.audit_upload:
-        print("Uploading to audits API...")
         audit_api_uploader = AuditApiUploader(
             api_key="XXXXXX",
             api_url="https://repo-analysis-app.vercel.app/api/repo/add"
         )
         audit_api_uploader.upload_audit(output)
-        print("Upload complete.")
 
 if __name__ == "__main__":
     main()
