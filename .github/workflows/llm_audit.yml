@@ -1,4 +1,4 @@
-name: Generate Project Dump for LLM
+name: Push codebase for LLM audits
 
 on:
   workflow_dispatch:
