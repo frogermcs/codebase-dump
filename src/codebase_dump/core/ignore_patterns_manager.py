@@ -74,7 +74,7 @@ class IgnorePatternManager:
     def should_ignore(self, path):
         if self.ignore_rules:
             for rule in self.ignore_rules:
-                if rule and rule.match(path):
+                if rule and rule.match(path) and not rule.negation:
                     return True
         
         return False
