@@ -72,7 +72,7 @@ def main():
     if args.audit_upload:
         audit_api_uploader = AuditApiUploader(
             api_key="XXXXXX",
-            api_url="https://repo-analysis-app.vercel.app/api/repo/add"
+            api_url="https://codeaudits.ai/api/repo/add"
         )
         audit_api_uploader.upload_audit(output)
 

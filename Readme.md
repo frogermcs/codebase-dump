@@ -55,7 +55,7 @@ codebase-dump . -f project_dump_for_llm.md -o markdown
 | `-o, --output-format` | Output format (text, markdown). Default: text |
 | `-f, --file` | Output file name |
 | `--max-size` | Maximum allowed text content size in KB (default: 10240 KB) |
-| `--audit-upload` | Send the output to the audits API on https://repo-analysis-app.vercel.app/ |
+| `--audit-upload` | Send the output to the audits API on https://codeaudits.ai/ |
 
 ### From Source
 
@@ -111,7 +111,7 @@ In this example:
 
 - The workflow is triggered manually with workflow_dispatch.
 - It installs codebase-dump and generates a .md file named project_dump_for_llm.md, containing the code structure and summary.
-- The --audit-upload flag sends the output to the audits API on https://repo-analysis-app.vercel.app/
+- The --audit-upload flag sends the output to the audits API on https://codeaudits.ai/
 - The generated file is then uploaded as an artifact for easy access and download.
 
 ## What next?
@@ -121,6 +121,6 @@ Once you get your codebase dump, copy that into one of LLMs as input prompt and 
 
 For inspiration on possible prompts, check [LLM Prompts section](https://github.com/kamilstanuch/codebase-digest?tab=readme-ov-file#llm-prompts-for-enhanced-analysis) in the Codebase Digest repository.
 
-## Use Repo-analysis-app
+## Use Code Audits
 
-Codebase dump was also uploaded to https://repo-analysis-app.vercel.app/ application. When you launch the link which was returned to you, you can run some pre-configured code audits, like architecture refactoring hints, missing tests or simplification hints. 
+Parsed codebase was also uploaded to https://codeaudits.ai/ application. When you launch the link which was returned to you, you can run some pre-configured code audits, like architecture refactoring hints, missing tests or simplification hints. 
