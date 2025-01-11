@@ -62,7 +62,8 @@ codebase-dump . -f project_dump_for_llm.md -o markdown
 You can also run codebase-dump directly from the source code:
 
 ```bash
-python app.py <path_to_codebase> -f <output_filename> -o <output_format>
+pip install -e .
+python src/codebase_dump/app.py <path_to_codebase> -f <output_filename> -o <output_format>
 ```
 
 ### Try online with Google Colab
