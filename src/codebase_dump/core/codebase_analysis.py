@@ -38,6 +38,9 @@ class CodebaseAnalysis:
         if max_depth is not None and current_depth > max_depth:
             return None
 
+        if path == ".":
+            path = os.getcwd()
+
         result = DirectoryAnalysis(name=os.path.basename(path))
         try:
             for item in os.listdir(path):                
