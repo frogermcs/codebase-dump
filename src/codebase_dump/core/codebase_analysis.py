@@ -5,15 +5,6 @@ from codebase_dump.core.models import DirectoryAnalysis, TextFileAnalysis
 
 class CodebaseAnalysis:
 
-    def is_text_file_old(self, file_path):
-        """Determines if a file is likely a text file based on its content."""
-        try:
-            with open(file_path, 'rb') as file:
-                chunk = file.read(1024)
-            return not bool(chunk.translate(None, bytes([7, 8, 9, 10, 12, 13, 27] + list(range(0x20, 0x100)))))
-        except IOError:
-            return False
-
     def is_text_file(self, file_path):
         try:
             with open(file_path, 'r') as file:
