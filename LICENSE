@@ -1,0 +1,29 @@
+BUSINESS SOURCE LICENSE 1.1
+License Date: January 1, 2025
+Change Date: January 1, 2028
+Change License: Apache License, Version 2.0
+
+For additional information about the Business Source License, please visit the
+official BSL site.
+
+1. License Grant
+Copyright © 2025
+Miroslaw Stanek, Practical Engineering Management.
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software (the “Software”), to use, reproduce, display, and distribute the Software, solely for non-production purposes, subject to the limitations of this license. “Non-production purposes” means for development, testing, or proof-of-concept purposes only.
+
+2. Usage Limitation
+The grant set forth in Section 1 does not extend to production use of the Software. For the purposes of this license, “production use” means the use of the Software to provide services or distribute the Software to third parties as part of a service, or to run business operations. If you wish to use the Software for production purposes, you must obtain a commercial license from Miroslaw Stanek, Practical Engineering Management or its authorized distributors.
+
+3. Change Date
+The Change Date is January 1, 2028, or such earlier date that the licensor may choose to release the Software under the Change License. On or after the Change Date, this Software will be made available under the Apache License, Version 2.0 as stated in this license. Once the Software is made available under the Change License, you may use the Software under the terms of the Change License.
+
+4. Change License
+Prior to the Change Date, you may not use the Software under the terms of the Change License. You must keep all copies of the Software under this Business Source License until the Change Date, except as expressly permitted by the licensor. After the Change Date, any copy of the Software received under this license may be used under the terms of the Change License, and no longer under the terms of this Business Source License.
+
+5. Legal Effect of This License
+This Business Source License does not grant you any rights to any software code or other intellectual property that is not included with the Software. This Business Source License shall be governed by and construed under the laws of the jurisdiction(s) of Miroslaw Stanek, Practical Engineering Management’s choosing. Any disputes arising out of or related to this license shall be subject to the exclusive jurisdiction of the courts located in said jurisdiction(s).
+
+6. Disclaimer
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OF OR OTHER DEALINGS IN THE SOFTWARE.
