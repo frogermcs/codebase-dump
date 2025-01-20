@@ -18,7 +18,8 @@ def main():
     parser.add_argument("-o", "--output-format", choices=["text", "markdown"], default="text", help="Output format (default: text)")
     parser.add_argument("-f", "--file", help="Output file name (default: <directory_name>_codebase_dump.<format_extension>)")
     parser.add_argument("--audit-upload", help="Send the output to the audits API", action="store_true")
-    
+    parser.add_argument("--audit-url", default="https://codeaudits.ai/api/repo/add", help="API URL to send the audit to (default: https://codeaudits.ai/api/repo/add)")
+
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
         sys.exit(1)
@@ -72,7 +73,7 @@ def main():
     if args.audit_upload:
         audit_api_uploader = AuditApiUploader(
             api_key="XXXXXX",
-            api_url="https://codeaudits.ai/api/repo/add"
+            api_url=args.audit_url
         )
         audit_api_uploader.upload_audit(output)
 
