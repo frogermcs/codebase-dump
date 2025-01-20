@@ -68,3 +68,49 @@ class TestAuditApiUploader(unittest.TestCase):
             json={"text": "Test audit."},
             headers={"x-api-key": "test_key"}
         )
+
+    @patch("requests.post")
+    def test_upload_audit_with_custom_api_url(self, mock_post):
+        """Test uploading an audit successfully with a custom API URL."""
+        # Mock the response
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"uploaded": True, "id": "12345"}
+        mock_post.return_value = mock_response
+
+        custom_api_url = "http://custom.example.com/upload"
+        uploader = AuditApiUploader(api_key="test_key", api_url=custom_api_url)
+
+        # We patch print to ensure we can verify calls (optional)
+        with patch("builtins.print") as mock_print:
+            uploader.upload_audit("Sample audit content")
+
+            # Ensure the POST request was made as expected
+            mock_post.assert_called_once_with(
+                custom_api_url,
+                json={"text": "Sample audit content"},
+                headers={"x-api-key": "test_key"}
+            )
+ 
+    @patch("requests.post")
+    def test_upload_audit_default_api_url(self, mock_post):
+        """Test uploading an audit successfully with the default API URL."""
+        # Mock the response
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"uploaded": True, "id": "12345"}
+        mock_post.return_value = mock_response
+         
+        default_api_url = "https://codeaudits.ai/api/repo/add"
+        uploader = AuditApiUploader(api_key="test_key", api_url=default_api_url)
+
+        # We patch print to ensure we can verify calls (optional)
+        with patch("builtins.print") as mock_print:
+            uploader.upload_audit("Sample audit content")
+
+            # Ensure the POST request was made as expected
+            mock_post.assert_called_once_with(
+                default_api_url,
+                json={"text": "Sample audit content"},
+                headers={"x-api-key": "test_key"}
+            )
