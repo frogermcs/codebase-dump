@@ -78,8 +78,9 @@ class TestAuditApiUploader(unittest.TestCase):
         mock_response.json.return_value = {"uploaded": True, "id": "12345"}
         mock_post.return_value = mock_response
 
-        custom_api_url = "http://custom.example.com/upload"
-        uploader = AuditApiUploader(api_key="test_key", api_url=custom_api_url)
+        base_url = "http://custom.example.com/"
+        expected_call_url = "http://custom.example.com/api/repo/add"
+        uploader = AuditApiUploader(api_key="test_key", api_url=base_url)
 
         # We patch print to ensure we can verify calls (optional)
         with patch("builtins.print") as mock_print:
@@ -87,7 +88,7 @@ class TestAuditApiUploader(unittest.TestCase):
 
             # Ensure the POST request was made as expected
             mock_post.assert_called_once_with(
-                custom_api_url,
+                expected_call_url,
                 json={"text": "Sample audit content"},
                 headers={"x-api-key": "test_key"}
             )
@@ -101,8 +102,8 @@ class TestAuditApiUploader(unittest.TestCase):
         mock_response.json.return_value = {"uploaded": True, "id": "12345"}
         mock_post.return_value = mock_response
          
-        default_api_url = "https://codeaudits.ai/api/repo/add"
-        uploader = AuditApiUploader(api_key="test_key", api_url=default_api_url)
+        expected_call_url = "https://codeaudits.ai/api/repo/add"
+        uploader = AuditApiUploader(api_key="test_key", api_url=expected_call_url)
 
         # We patch print to ensure we can verify calls (optional)
         with patch("builtins.print") as mock_print:
@@ -110,7 +111,7 @@ class TestAuditApiUploader(unittest.TestCase):
 
             # Ensure the POST request was made as expected
             mock_post.assert_called_once_with(
-                default_api_url,
+                expected_call_url,
                 json={"text": "Sample audit content"},
                 headers={"x-api-key": "test_key"}
             )

@@ -55,8 +55,8 @@ codebase-dump . -f project_dump_for_llm.md -o markdown
 | `-o, --output-format` | Output format (text, markdown). Default: text |
 | `-f, --file` | Output file name |
 | `--max-size` | Maximum allowed text content size in KB (default: 10240 KB) |
-| `--audit-upload` | Send the output to the audits API on https://codeaudits.ai/ |
-| `--audit-url`  | API URL to send the audit to (default: https://codeaudits.ai/api/repo/add) |
+| `--audit-upload` | Send the output to the audits API as defined by `--audit-base-url` parameter |
+| `--audit-base-url`  | API Base URL to send the audit to (default: https://codeaudits.ai/) |
 
 ### From Source
 

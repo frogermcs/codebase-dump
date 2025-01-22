@@ -21,9 +21,9 @@ class AuditApiUploader:
             "text": audit
         }
 
-        response = requests.post(self.api_url, 
-                                 json=payload,
-                                 headers=headers)
+        url = self.api_url + "api/repo/add"
+
+        response = requests.post(url, json=payload, headers=headers)
         
         if response.status_code != 200:
             raise ValueError(f"Failed to upload audit: {response.text}")
