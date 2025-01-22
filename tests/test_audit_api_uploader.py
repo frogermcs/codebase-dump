@@ -7,14 +7,16 @@ import sys
 class TestAuditApiUploader(unittest.TestCase):
     def test_init_no_api_key(self):
         """Test that initializing without an API key raises ValueError."""
+        base_url = "http://custom.example.com/"
         with self.assertRaises(ValueError) as context:
-            AuditApiUploader(api_key="", api_url="http://example.com/upload")
+            AuditApiUploader(api_key="", api_url=base_url)
 
         self.assertIn("API Key is required", str(context.exception))
 
     def test_upload_no_audit_text(self):
         """Test that uploading without audit text raises ValueError."""
-        uploader = AuditApiUploader(api_key="test_key", api_url="http://example.com/upload")
+        base_url = "http://custom.example.com/"
+        uploader = AuditApiUploader(api_key="test_key", api_url=base_url)
         with self.assertRaises(ValueError) as context:
             uploader.upload_audit(audit="")
         self.assertIn("Repo content is required", str(context.exception))
@@ -28,7 +30,9 @@ class TestAuditApiUploader(unittest.TestCase):
         mock_response.json.return_value = {"uploaded": True, "id": "12345"}
         mock_post.return_value = mock_response
 
-        uploader = AuditApiUploader(api_key="test_key", api_url="http://example.com/upload")
+        base_url = "http://custom.example.com/"
+        expected_call_url = "http://custom.example.com/api/repo/add"
+        uploader = AuditApiUploader(api_key="test_key", api_url=base_url)
 
         # We patch print to ensure we can verify calls (optional)
         with patch("builtins.print") as mock_print:
@@ -36,7 +40,7 @@ class TestAuditApiUploader(unittest.TestCase):
 
             # Ensure the POST request was made as expected
             mock_post.assert_called_once_with(
-                "http://example.com/upload",
+                expected_call_url,
                 json={"text": "Sample audit content"},
                 headers={"x-api-key": "test_key"}
             )
@@ -57,14 +61,16 @@ class TestAuditApiUploader(unittest.TestCase):
         mock_response.text = "Error uploading"
         mock_post.return_value = mock_response
 
-        uploader = AuditApiUploader(api_key="test_key", api_url="http://example.com/upload")
+        base_url = "http://custom.example.com/"
+        expected_call_url = "http://custom.example.com/api/repo/add"
+        uploader = AuditApiUploader(api_key="test_key", api_url=base_url)
         
         with self.assertRaises(ValueError) as context:
             uploader.upload_audit(audit="Test audit.")
         
         self.assertIn("Failed to upload audit: Error uploading", str(context.exception))
         mock_post.assert_called_once_with(
-            "http://example.com/upload",
+            expected_call_url,
             json={"text": "Test audit."},
             headers={"x-api-key": "test_key"}
         )
