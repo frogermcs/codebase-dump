@@ -1,0 +1,50 @@
+name: Push codebase for LLM audits
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_url:
+        description: 'URL of the repository to audit'
+        required: true
+        type: string
+
+jobs:
+  codebase-for-audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required to fetch all history for proper cloning
+
+      - name: Clone target repository
+        run: git clone --depth 1 ${{ github.event.inputs.repo_url }} target_repo
+        
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+
+      - name: Install Codebase Dump
+        run: pip install codebase-dump
+
+      - name: Generate Single-File Prompt for LLM
+        run: codebase-dump target_repo -f project_dump_for_llm.md -o markdown --audit-upload >> audit.log
+
+      - name: Extract audit URL
+        id: extract_audit_url
+        run: |
+          # Locate the JSON line, convert single quotes to double quotes, and extract 'url' using jq
+          url=$(grep '^{' audit.log | sed "s/'/\"/g" | jq -r '.url')
+          echo "url=$url" >> $GITHUB_OUTPUT
+
+      - name: Add URL to summary
+        run: |
+          echo "Audit URL: ${{ steps.extract_audit_url.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Prompt File as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: project_dump_for_llm.md
+          path: project_dump_for_llm.md
