@@ -18,8 +18,11 @@ jobs:
         with:
           fetch-depth: 0 # Required to fetch all history for proper cloning
 
-      - name: Clone target repository
-        run: git clone --depth 1 ${{ github.event.inputs.repo_url }} target_repo
+      - name: Clone target repository with gh
+        run: gh repo clone ${{ github.event.inputs.repo_url }} target_repo -- --depth 1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
         
       - name: Set up Python
         uses: actions/setup-python@v3
