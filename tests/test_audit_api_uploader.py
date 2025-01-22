@@ -108,8 +108,9 @@ class TestAuditApiUploader(unittest.TestCase):
         mock_response.json.return_value = {"uploaded": True, "id": "12345"}
         mock_post.return_value = mock_response
          
+        base_url = "https://codeaudits.ai/"
         expected_call_url = "https://codeaudits.ai/api/repo/add"
-        uploader = AuditApiUploader(api_key="test_key", api_url=expected_call_url)
+        uploader = AuditApiUploader(api_key="test_key", api_url=base_url)
 
         # We patch print to ensure we can verify calls (optional)
         with patch("builtins.print") as mock_print:
