@@ -21,7 +21,7 @@ jobs:
       - name: Clone target repository with gh
         run: gh repo clone ${{ github.event.inputs.repo_url }} target_repo -- --depth 1
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_CLONE_PRIV_REPOS }}
 
         
       - name: Set up Python
