@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       repo_url:
-        description: 'URL of the repository to audit. For example: https://github.com/frogermcs/codebase-dump'
+        description: 'Repo URL for audit. Example: https://github.com/frogermcs/codebase-dump'
+        default: 'https://github.com/frogermcs/codebase-dump'
         required: true
         type: string
 
