@@ -24,7 +24,7 @@ class CodebaseAnalysis:
         except Exception as e:
             return f"Error reading file: {str(e)}"
 
-    def analyze_directory(self, path, ignore_patterns_manager: IgnorePatternManager, base_path, max_depth=None, current_depth=0) -> DirectoryAnalysis:
+    def analyze_directory(self, path, ignore_patterns_manager: IgnorePatternManager, base_path, parent=None, max_depth=None, current_depth=0) -> DirectoryAnalysis:
         """Recursively analyzes a directory and its contents."""
         if max_depth is not None and current_depth > max_depth:
             return None
@@ -32,9 +32,9 @@ class CodebaseAnalysis:
         if path == ".":
             path = os.getcwd()
 
-        result = DirectoryAnalysis(name=os.path.basename(path))
+        result = DirectoryAnalysis(name=os.path.basename(path), parent=parent)
         try:
-            for item in os.listdir(path):                
+            for item in os.listdir(path):            
                 item_path = os.path.join(path, item)
                 
                 is_ignored = ignore_patterns_manager.should_ignore(item_path)
@@ -55,10 +55,10 @@ class CodebaseAnalysis:
                         content = "[Non-text file]"
                         print(f"Debug: Non-text file {item_path}, size: {file_size}")
 
-                    child = TextFileAnalysis(name=item, file_content=content, is_ignored=is_ignored)
+                    child = TextFileAnalysis(name=item, file_content=content, is_ignored=is_ignored, parent=result)
                     result.children.append(child)
                 elif os.path.isdir(item_path):
-                    subdir = self.analyze_directory(item_path, ignore_patterns_manager, base_path, max_depth, current_depth + 1)
+                    subdir = self.analyze_directory(item_path, ignore_patterns_manager, base_path, result, max_depth, current_depth + 1)
                     if subdir:
                         subdir.is_ignored = is_ignored
                         result.children.append(subdir)

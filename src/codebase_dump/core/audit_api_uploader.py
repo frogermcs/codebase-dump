@@ -26,6 +26,7 @@ class AuditApiUploader:
         response = requests.post(url, json=payload, headers=headers)
         
         if response.status_code != 200:
+            print(f"Failed to upload audit: {response.text}")
             raise ValueError(f"Failed to upload audit: {response.text}")
         
         print("Audit uploaded successfully")
