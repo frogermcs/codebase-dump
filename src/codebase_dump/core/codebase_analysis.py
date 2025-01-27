@@ -68,13 +68,8 @@ class CodebaseAnalysis:
                           path, 
                           ignore_patterns_manager: IgnorePatternManager, 
                           base_path, 
-                          parent=None, 
-                          max_depth=None, 
-                          current_depth=0) -> DirectoryAnalysis:
+                          parent=None) -> DirectoryAnalysis:
         """Recursively analyzes a directory and its contents."""
-
-        if max_depth is not None and current_depth > max_depth:
-            return None
 
         if path == ".":
             path = os.getcwd()
@@ -85,7 +80,7 @@ class CodebaseAnalysis:
             node = self._create_node(item_path, ignore_patterns_manager, result)
             if node:
                 if isinstance(node, DirectoryAnalysis):
-                   subdir = self.analyze_directory(item_path, ignore_patterns_manager, base_path, node, max_depth, current_depth + 1)
+                   subdir = self.analyze_directory(item_path, ignore_patterns_manager, base_path, node)
                    if subdir:
                         result.children.append(subdir)
                 else:
