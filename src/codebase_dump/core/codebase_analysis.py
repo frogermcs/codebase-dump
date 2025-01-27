@@ -68,7 +68,8 @@ class CodebaseAnalysis:
                           path, 
                           ignore_patterns_manager: IgnorePatternManager, 
                           base_path, 
-                          parent=None) -> DirectoryAnalysis:
+                          parent=None, 
+                          ignore_top_files=0) -> DirectoryAnalysis:
         """Recursively analyzes a directory and its contents."""
 
         if path == ".":
@@ -80,9 +81,19 @@ class CodebaseAnalysis:
             node = self._create_node(item_path, ignore_patterns_manager, result)
             if node:
                 if isinstance(node, DirectoryAnalysis):
-                   subdir = self.analyze_directory(item_path, ignore_patterns_manager, base_path, node)
+                   subdir = self.analyze_directory(item_path, ignore_patterns_manager, base_path, node, ignore_top_files=ignore_top_files)
                    if subdir:
                         result.children.append(subdir)
                 else:
                     result.children.append(node)
+        
+        root = parent is None
+        if root and ignore_top_files > 0:
+            largest_files = result.get_largest_files(ignore_top_files)
+            print(f"Ignoring {ignore_top_files} largest files:")
+            for file in largest_files:
+                print(f"  {file.get_full_path()} ({file.size} bytes)")
+                file.is_ignored = True
+                print(file)
+
         return result

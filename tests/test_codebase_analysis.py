@@ -162,3 +162,33 @@ class TestCodebaseAnalysis(unittest.TestCase):
           self.assertEqual(len(nested_dir.children), 1)
           self.assertEqual(nested_dir.children[0].name, "file3.txt")
           self.assertIsInstance(nested_dir.children[0], TextFileAnalysis)
+
+     @patch("os.getcwd", return_value=".")
+     @patch("codebase_dump.core.codebase_analysis.os.listdir", return_value=["file1.txt", "file2.txt", "file3.txt"])
+     @patch('codebase_dump.core.codebase_analysis.os.path.isfile', return_value=True)
+     @patch('codebase_dump.core.codebase_analysis.os.path.getsize', side_effect=[10, 20, 30])
+     def test_analyze_directory_with_ignore_top_files(self, mock_read, mock_isfile, mock, mock_getcwd):
+
+          def mock_open_side_effect(path, mode="r", encoding='utf-8', errors='ignore'):
+            if path.endswith("file1.txt"):
+                return mock_open(read_data="Big")()
+            elif path.endswith("file2.txt"):
+                return mock_open(read_data="Bigger")()
+            elif path.endswith("file3.txt"):
+                return mock_open(read_data="The Biggest")()
+            else:
+                return mock_open(read_data="")()
+          
+          with patch("builtins.open", new_callable=mock_open) as mock_file:
+               mock_file.side_effect = mock_open_side_effect
+               ignore_manager = IgnorePatternManager(".", load_default_ignore_patterns=False)
+               codebase_analysis = CodebaseAnalysis()
+               result = codebase_analysis.analyze_directory(".", ignore_manager, ".", ignore_top_files=2)
+               self.assertEqual(len(result.children), 3)
+               
+               # Check that the two largest files are ignored
+               self.assertTrue(result.children[2].is_ignored)
+               self.assertTrue(result.children[1].is_ignored)
+
+               # Check that the smallest file is not ignored
+               self.assertFalse(result.children[0].is_ignored)

@@ -61,6 +61,10 @@ class OutputFormatterBase:
         summary += f"Top largest files: {self.generate_top_files_string(data.get_largest_files())}\n"
         summary += f"Top largest directories: {self.generate_top_directories_string(data.get_largest_directories())}\n"
 
+        ignored_files_string = self.generate_top_files_string([f for f in data._get_all_files() if f.is_ignored], prefix="- ")
+        if  ignored_files_string and ignored_files_string != "- Top 0 largest files:\n":
+            summary += f"\nTop ignored files (due to --ignore-top-files):\n {ignored_files_string}"
+
         return summary
 
     def generate_top_files_string(self, files: List[TextFileAnalysis], prefix=""):
