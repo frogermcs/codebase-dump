@@ -19,12 +19,18 @@ jobs:
         with:
           fetch-depth: 0 # Required to fetch all history for proper cloning
 
+      - name: Extract repo name from URL
+        id: extract_repo_name
+        run: |
+          REPO_URL="${{ github.event.inputs.repo_url }}"
+          REPO_NAME=$(basename "$REPO_URL" .git)
+          echo "repo_name=$REPO_NAME" >> $GITHUB_OUTPUT
+
       - name: Clone target repository with gh
-        run: gh repo clone ${{ github.event.inputs.repo_url }} target_repo -- --depth 1
+        run: gh repo clone ${{ github.event.inputs.repo_url }} ${{ steps.extract_repo_name.outputs.repo_name }} -- --depth 1
         env:
           GH_TOKEN: ${{ secrets.GH_CLONE_PRIV_REPOS }}
 
-        
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
@@ -34,7 +40,7 @@ jobs:
         run: pip install codebase-dump
 
       - name: Generate Single-File Prompt for LLM
-        run: codebase-dump target_repo -f project_dump_for_llm.md -o markdown --audit-upload >> audit.log
+        run: codebase-dump ${{ steps.extract_repo_name.outputs.repo_name }} -f project_dump_for_llm.md -o markdown --audit-upload >> audit.log
 
       - name: Extract audit URL
         id: extract_audit_url
