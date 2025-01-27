@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch, mock_open
 from codebase_dump.core.codebase_analysis import CodebaseAnalysis
 from codebase_dump.core.ignore_patterns_manager import IgnorePatternManager
+from codebase_dump.core.models import DirectoryAnalysis, TextFileAnalysis
 
 class TestCodebaseAnalysis(unittest.TestCase):
 
