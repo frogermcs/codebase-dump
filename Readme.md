@@ -41,12 +41,6 @@ Once installed, you can run codebase-dump from the command line:
 codebase-dump <path_to_codebase> -f <output_filename> -o <output_format>
 ```
 
-For example, to generate a markdown file of your project’s code structure:
-
-```bash
-codebase-dump . -f project_dump_for_llm.md -o markdown
-```
-
 ### Available Arguments
 
 | Option | Description |
@@ -55,8 +49,42 @@ codebase-dump . -f project_dump_for_llm.md -o markdown
 | `-o, --output-format` | Output format (text, markdown). Default: text |
 | `-f, --file` | Output file name |
 | `--max-size` | Maximum allowed text content size in KB (default: 10240 KB) |
+| `--ignore-top-large-files` | Number of largest files to ignore (default: 0) |
 | `--audit-upload` | Send the output to the audits API as defined by `--audit-base-url` parameter |
 | `--audit-base-url`  | API Base URL to send the audit to (default: https://codeaudits.ai/) |
+
+### Examples
+
+Generate a markdown file of your project’s code structure:
+
+```bash
+codebase-dump . -f project_dump_for_llm.md -o markdown
+```
+
+---
+
+Generate a markdown file and push it to the audits app codeaudits.ai:
+
+```bash
+codebase-dump . -o markdown --audit-upload
+```
+
+---
+
+Generate a markdown file and push it to custom instance of audits app:
+
+```bash
+codebase-dump . -o markdown --audit-upload --audit-base-url https://your-audit-instance.com/
+```
+
+---
+
+Generate a markdown file while ignoring top 5 largest files and push it to the audits app codeaudits.ai:
+
+```bash
+codebase-dump . -o markdown --audit-upload --ignore-top-large-files=5
+```
+
 
 ### From Source
 

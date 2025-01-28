@@ -19,6 +19,7 @@ def main():
     parser.add_argument("-f", "--file", help="Output file name (default: <directory_name>_codebase_dump.<format_extension>)")
     parser.add_argument("--audit-upload", help="Send the output to the audits API", action="store_true")
     parser.add_argument("--audit-base-url", default="https://codeaudits.ai/", help="API URL to send the audit to (default: https://codeaudits.ai/)")
+    parser.add_argument("--ignore-top-large-files", type=int, default=0, help="Number of largest files to ignore (default: 0)")
 
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
@@ -37,7 +38,10 @@ def main():
     print("Codebase Digest")
     print("Analyzing directory: " + args.path)
     
-    data = codebase_analysis.analyze_directory(args.path, ignore_patterns_manager, args.path)
+    data = codebase_analysis.analyze_directory(path=args.path, 
+                                               ignore_patterns_manager=ignore_patterns_manager, 
+                                               base_path=args.path, 
+                                               ignore_top_files=args.ignore_top_large_files)
     
     total_size = data.size
     estimated_output_size = data.get_non_ignored_text_content_size()

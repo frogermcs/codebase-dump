@@ -1,11 +1,13 @@
 from dataclasses import dataclass, field
-from typing import List, Union
+from typing import List, Union, Optional
 import tiktoken
+import os
 
 @dataclass
 class NodeAnalysis:
     name: str = ""
     is_ignored: bool = False
+    parent: Optional["NodeAnalysis"] = None  
 
     @property
     def type(self) -> str:
@@ -17,6 +19,12 @@ class NodeAnalysis:
     
     def to_dict(self):
         return NotImplemented
+    
+    def get_full_path(self) -> str:
+        """Returns the full path of the node."""
+        if self.parent is None:
+            return self.name  # Base case: root node
+        return os.path.join(self.parent.get_full_path(), self.name)
 
 @dataclass
 class TextFileAnalysis(NodeAnalysis):
@@ -114,6 +122,39 @@ class DirectoryAnalysis(NodeAnalysis):
                size += child.size
         return size
     
+    def _get_all_files(self):
+            files = []
+            for child in self.children:
+                if isinstance(child, TextFileAnalysis):
+                   files.append(child)
+                if isinstance(child, DirectoryAnalysis):
+                   files.extend(child._get_all_files())
+            return files
+            
+
+    def get_largest_files(self, n=10) -> List[TextFileAnalysis]:
+        """Returns a list of the n largest files in this directory and its subdirectories."""
+        all_files = self._get_all_files()
+        sorted_files = sorted(all_files, key=lambda file: file.size, reverse=True)
+        return sorted_files[:n]
+
+    def _get_all_directories(self):
+        directories = []
+        for child in self.children:
+            if isinstance(child, DirectoryAnalysis):
+                directories.append(child)
+                directories.extend(child._get_all_directories())
+
+        return directories
+
+
+    def get_largest_directories(self, n=10) -> List["DirectoryAnalysis"]:
+        """Returns a list of the n largest directories in this directory and its subdirectories."""
+        all_directories = self._get_all_directories()
+        sorted_directories = sorted(all_directories, key=lambda directory: directory.size, reverse=True)
+        return sorted_directories[:n]
+
+
     def to_dict(self):
         return {
             "name": self.name,

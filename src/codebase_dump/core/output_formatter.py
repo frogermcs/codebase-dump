@@ -1,4 +1,5 @@
 from codebase_dump.core.models import DirectoryAnalysis, NodeAnalysis, TextFileAnalysis
+from typing import List
 import os
 
 class OutputFormatterBase:
@@ -57,8 +58,33 @@ class OutputFormatterBase:
         summary += f"Actual analyzed size: {data.get_non_ignored_text_content_size() / 1024:.2f} KB\n"
         summary += f"Total tokens: {data.get_total_tokens()}\n"
         summary += f"Actual text content size: {data.size / 1024:.2f} KB\n"
-        
+        summary += f"Top largest files: {self.generate_top_files_string(data.get_largest_files())}\n"
+        summary += f"Top largest directories: {self.generate_top_directories_string(data.get_largest_directories())}\n"
+
+        ignored_files_string = self.generate_top_files_string([f for f in data._get_all_files() if f.is_ignored], prefix="- ")
+        if  ignored_files_string and ignored_files_string != "- Top 0 largest files:\n":
+            summary += f"\nTop ignored files (due to --ignore-top-files):\n {ignored_files_string}"
+
         return summary
+
+    def generate_top_files_string(self, files: List[TextFileAnalysis], prefix=""):
+        if not files:
+            return f"{prefix}No large files found.\n"
+
+        output = f"{prefix}Top {len(files)} largest files:\n"
+        for file in files:
+             output += f"{prefix}- {file.get_full_path()} ({file.size} bytes)\n"
+
+        return output
+
+    def generate_top_directories_string(self, directories: List[DirectoryAnalysis], prefix=""):
+        if not directories:
+           return f"{prefix}No large directories found.\n"
+
+        output = f"{prefix}Top {len(directories)} largest directories:\n"
+        for directory in directories:
+            output += f"{prefix}- {directory.get_full_path()} ({directory.size} bytes)\n"
+        return output
     
 class PlainTextOutputFormatter(OutputFormatterBase):
     def output_file_extension(self):
@@ -94,6 +120,10 @@ class MarkdownOutputFormatter(OutputFormatterBase):
         output += f"- Total text file size (including ignored): {data.size / 1024:.2f} KB\n"
         output += f"- Total tokens: {data.get_total_tokens()}\n"
         output += f"- Analyzed text content size: {data.get_non_ignored_text_content_size() / 1024:.2f} KB\n\n"
+        output += "## Top 10 Largest Files\n\n"
+        output += self.generate_top_files_string(data.get_largest_files(), prefix="- ")
+        output += "\n## Top 10 Largest Directories\n\n"
+        output += self.generate_top_directories_string(data.get_largest_directories(), prefix="- ")
         output += "## File Contents\n\n"
         for file in self.generate_content_string(data):
             output += f"### {file['path']}\n\n```\n{file['content']}\n```\n\n"
