@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="codebase-dump",
-    version="0.5.0",
+    version="0.5.1",
     description="Parse your repository into single-file prompt, so you can use it as an LLM input.",
     author="Mirek Stanek, Kamil Stanuch",
     author_email="mirek@practicalengineering.management, kamil@stanuch.eu",
