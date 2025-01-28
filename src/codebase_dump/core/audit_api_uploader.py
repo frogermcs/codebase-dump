@@ -27,6 +27,7 @@ class AuditApiUploader:
         if response.status_code != 200:
             if response.status_code == 413:
                 print(f"Parsed codebase is too big. Please reduce the size. You can use --ignore-top-large-files param to ignore the largest files or use ignore patterns.")
+                raise ValueError(f"Parsed codebase is too big. Please reduce the size. You can use --ignore-top-large-files param to ignore the largest files or use ignore patterns.")
             else:
                 print(f"Failed to upload audit: {response.text}")
                 raise ValueError(f"Failed to upload audit: {response.text}")
