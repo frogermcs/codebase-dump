@@ -120,10 +120,6 @@ class MarkdownOutputFormatter(OutputFormatterBase):
         output += f"- Total text file size (including ignored): {data.size / 1024:.2f} KB\n"
         output += f"- Total tokens: {data.get_total_tokens()}\n"
         output += f"- Analyzed text content size: {data.get_non_ignored_text_content_size() / 1024:.2f} KB\n\n"
-        output += "## Top 10 Largest Files\n\n"
-        output += self.generate_top_files_string(data.get_largest_files(), prefix="- ")
-        output += "\n## Top 10 Largest Directories\n\n"
-        output += self.generate_top_directories_string(data.get_largest_directories(), prefix="- ")
         output += "## File Contents\n\n"
         for file in self.generate_content_string(data):
             output += f"### {file['path']}\n\n```\n{file['content']}\n```\n\n"
