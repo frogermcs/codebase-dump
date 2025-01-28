@@ -1,4 +1,3 @@
-import json
 import requests
 
 class AuditApiUploader:
@@ -26,9 +25,12 @@ class AuditApiUploader:
         response = requests.post(url, json=payload, headers=headers)
         
         if response.status_code != 200:
-            print(f"Failed to upload audit: {response.text}")
-            raise ValueError(f"Failed to upload audit: {response.text}")
-        
-        print("Audit uploaded successfully")
-        print(f"Audit info:")
-        print(response.json())
+            if response.status_code == 413:
+                print(f"Parsed codebase is too big. Please reduce the size. You can use --ignore-top-large-files param to ignore the largest files or use ignore patterns.")
+            else:
+                print(f"Failed to upload audit: {response.text}")
+                raise ValueError(f"Failed to upload audit: {response.text}")
+        else:
+            print("Audit uploaded successfully")
+            print(f"Audit info:")
+            print(response.json())
