@@ -2,15 +2,15 @@ from setuptools import setup, find_packages
 
 setup(
     name="codebase-dump",
-    version="0.4.0",
-    description="Generate a single-file dump of your repository, so you can use it as LLM input",
+    version="0.5.0",
+    description="Parse your repository into single-file prompt, so you can use it as an LLM input.",
     author="Mirek Stanek, Kamil Stanuch",
     author_email="mirek@practicalengineering.management, kamil@stanuch.eu",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    install_requires=["tiktoken", "gitignore_parser"],  # List core dependencies here
+    install_requires=["tiktoken", "gitignore_parser"],
     extras_require={
-        "dev": ["pytest", "twine"]  # Development dependencies
+        "dev": ["pytest", "twine"]
     },
     entry_points={
     'console_scripts': [
