@@ -7,7 +7,7 @@ class CodebaseAnalysis:
     def is_text_file(self, file_path):
         try:
             with open(file_path, 'r') as file:
-                 file.read()
+                file.read()
             return True
         except UnicodeDecodeError:
             return False
