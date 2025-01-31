@@ -54,7 +54,7 @@ jobs:
           echo "Audit URL: ${{ steps.extract_audit_url.outputs.url }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Upload Prompt File as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: project_dump_for_llm.md
           path: project_dump_for_llm.md
