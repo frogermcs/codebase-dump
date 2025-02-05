@@ -75,11 +75,17 @@ def main():
     print(output_formatter.generate_tree_string(data))
     print(output_formatter.generate_summary_string(data))
 
-    api_key = args.api_key or "XXXXX"
+    try:
+        from codebase_dump._version import __version__ as app_version
+    except ImportError:
+        app_version = None
+
+    submitted_by = f"codebase-dump-v{app_version}" if app_version else "codebase-dump"
     if args.audit_upload:
         audit_api_uploader = AuditApiUploader(
-            api_key=api_key,
-            api_url=args.audit_base_url
+            api_key=args.api_key,
+            api_url=args.audit_base_url,
+            api_submitted_by=submitted_by
         )
         audit_api_uploader.upload_audit(output)
 

@@ -1,11 +1,10 @@
 import requests
 
 class AuditApiUploader:
-    def __init__(self, api_key, api_url):
+    def __init__(self, api_key, api_url, api_submitted_by):
         self.api_key = api_key
         self.api_url = api_url
-        if not self.api_key:
-            raise ValueError("API Key is required to upload audit")
+        self.api_submitted_by = api_submitted_by
         
     def upload_audit(self, audit: str):
         if not audit:
@@ -14,15 +13,18 @@ class AuditApiUploader:
         print("Uploading to audits API...")        
                 
         headers = {
-            "x-api-key": self.api_key
+            "x-submitted-by": self.api_submitted_by
         }
+
+        if self.api_key:
+            headers["x-api-key"] = self.api_key
 
         payload = {
             "text": audit
         }
 
         url = self.api_url + "api/repo/add"
-
+        print(f"Headers: {headers}")
         response = requests.post(url, json=payload, headers=headers)
         
         if response.status_code != 200:

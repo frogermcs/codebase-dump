@@ -1,8 +1,11 @@
 from setuptools import setup, find_packages
 
+with open("src/codebase_dump/_version.py", "r") as f:
+    exec(f.read()) # Safely read the version from the _version.py file
+
 setup(
     name="codebase-dump",
-    version="0.5.2",
+    version=__version__,
     description="Parse your repository into single-file prompt, so you can use it as an LLM input.",
     author="Mirek Stanek, Kamil Stanuch",
     author_email="mirek@practicalengineering.management, kamil@stanuch.eu",
