@@ -52,6 +52,7 @@ codebase-dump <path_to_codebase> -f <output_filename> -o <output_format>
 | `--ignore-top-large-files` | Number of largest files to ignore (default: 0) |
 | `--audit-upload` | Send the output to the audits API as defined by `--audit-base-url` parameter |
 | `--audit-base-url`  | API Base URL to send the audit to (default: https://codeaudits.ai/) |
+| `--api-key`  | Your private API key to assign submitted repository to your account on https://codeaudits.ai/ |
 
 ### Examples
 
