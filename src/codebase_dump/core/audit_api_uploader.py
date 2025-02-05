@@ -24,7 +24,6 @@ class AuditApiUploader:
         }
 
         url = self.api_url + "api/repo/add"
-        print(f"Headers: {headers}")
         response = requests.post(url, json=payload, headers=headers)
         
         if response.status_code != 200:
