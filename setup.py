@@ -1,4 +1,11 @@
 from setuptools import setup, find_packages
+import os
+import sys
+
+src_dir = os.path.join(os.path.dirname(__file__), "src")
+if src_dir not in sys.path:
+    sys.path.insert(0, src_dir)
+
 from codebase_dump._version import __version__
 
 setup(
