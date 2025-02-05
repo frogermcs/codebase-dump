@@ -20,6 +20,7 @@ def main():
     parser.add_argument("--audit-upload", help="Send the output to the audits API", action="store_true")
     parser.add_argument("--audit-base-url", default="https://codeaudits.ai/", help="API URL to send the audit to (default: https://codeaudits.ai/)")
     parser.add_argument("--ignore-top-large-files", type=int, default=0, help="Number of largest files to ignore (default: 0)")
+    parser.add_argument("--api-key", type=str, default=None, help="Your private API key to assign submitted repository to your account on https://codeaudits.ai/")
 
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
@@ -74,9 +75,10 @@ def main():
     print(output_formatter.generate_tree_string(data))
     print(output_formatter.generate_summary_string(data))
 
+    api_key = args.api_key or "XXXXX"
     if args.audit_upload:
         audit_api_uploader = AuditApiUploader(
-            api_key="XXXXXX",
+            api_key=api_key,
             api_url=args.audit_base_url
         )
         audit_api_uploader.upload_audit(output)

@@ -12,10 +12,11 @@ class AuditApiUploader:
             raise ValueError("Repo content is required to upload")
 
         print("Uploading to audits API...")        
-
+                
         headers = {
-            "x-api-key": self.api_key,
+            "x-api-key": self.api_key
         }
+
         payload = {
             "text": audit
         }
