@@ -1,7 +1,5 @@
 from setuptools import setup, find_packages
-
-with open("src/codebase_dump/_version.py", "r") as f:
-    exec(f.read()) # Safely read the version from the _version.py file
+from codebase_dump._version import __version__
 
 setup(
     name="codebase-dump",
