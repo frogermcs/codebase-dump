@@ -50,8 +50,8 @@ class CodebaseAnalysis:
         is_ignored = ignore_patterns_manager.should_ignore(item_path)
         print(f"Debug: Checking {item_path}, ignored: {is_ignored}")
 
-        if is_ignored:
-             return None
+        # if is_ignored:
+        #      return None
 
         if os.path.isfile(item_path):
             try:
