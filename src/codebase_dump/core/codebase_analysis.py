@@ -81,7 +81,7 @@ class CodebaseAnalysis:
             node = self._create_node(item_path, ignore_patterns_manager, result)
             if node:
                 if isinstance(node, DirectoryAnalysis):
-                   subdir = self.analyze_directory(item_path, ignore_patterns_manager, base_path, node, ignore_top_files=ignore_top_files)
+                   subdir = self.analyze_directory(item_path, ignore_patterns_manager, base_path, result, ignore_top_files=ignore_top_files)
                    if subdir:
                         result.children.append(subdir)
                 else:
