@@ -20,7 +20,7 @@ class OutputFormatterBase:
             result += f" ({node.size} bytes)"
 
         if node.is_ignored:
-            result += " [IGNORED]"
+            result += " [Status: IGNORED]"
 
         result += "\n"
 
@@ -58,12 +58,8 @@ class OutputFormatterBase:
         summary += f"Actual analyzed size: {data.get_non_ignored_text_content_size() / 1024:.2f} KB\n"
         summary += f"Total tokens: {data.get_total_tokens()}\n"
         summary += f"Actual text content size: {data.size / 1024:.2f} KB\n"
-        summary += f"Top largest files: {self.generate_top_files_string(data.get_largest_files())}\n"
-        summary += f"Top largest directories: {self.generate_top_directories_string(data.get_largest_directories())}\n"
-
-        ignored_files_string = self.generate_top_files_string([f for f in data._get_all_files() if f.is_ignored], prefix="- ")
-        if  ignored_files_string and ignored_files_string != "- Top 0 largest files:\n":
-            summary += f"\nTop ignored files (due to --ignore-top-files):\n {ignored_files_string}"
+        summary += f"Top largest non-ignored files:\n{self.generate_top_files_string(data.get_largest_files())}\n"
+        summary += f"Top largest non-ignored directories:\n{self.generate_top_directories_string(data.get_largest_directories())}\n"       
 
         return summary
 
@@ -71,7 +67,7 @@ class OutputFormatterBase:
         if not files:
             return f"{prefix}No large files found.\n"
 
-        output = f"{prefix}Top {len(files)} largest files:\n"
+        output = ""
         for file in files:
              output += f"{prefix}- {file.get_full_path()} ({file.size} bytes)\n"
 
@@ -81,7 +77,7 @@ class OutputFormatterBase:
         if not directories:
            return f"{prefix}No large directories found.\n"
 
-        output = f"{prefix}Top {len(directories)} largest directories:\n"
+        output = ""
         for directory in directories:
             output += f"{prefix}- {directory.get_full_path()} ({directory.size} bytes)\n"
         return output

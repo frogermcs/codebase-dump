@@ -72,7 +72,7 @@ def main():
     print(f"\nAnalysis saved to: {full_path}")
     
     print("Analysis Summary\n")
-    print(output_formatter.generate_tree_string(data))
+    print(output_formatter.generate_tree_string(data, show_ignored=True))
     print(output_formatter.generate_summary_string(data))
 
     try:

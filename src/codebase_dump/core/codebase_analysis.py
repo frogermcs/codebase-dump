@@ -48,10 +48,7 @@ class CodebaseAnalysis:
         """Creates a node (file or directory) for a given path."""
 
         is_ignored = ignore_patterns_manager.should_ignore(item_path)
-        print(f"Debug: Checking {item_path}, ignored: {is_ignored}")
-
-        # if is_ignored:
-        #      return None
+        print(f"Debug: Checking {item_path}")
 
         if os.path.isfile(item_path):
             try:
@@ -74,8 +71,8 @@ class CodebaseAnalysis:
 
         if path == ".":
             path = os.getcwd()
-
-        result = DirectoryAnalysis(name=os.path.basename(path), parent=parent)
+        
+        result = DirectoryAnalysis(name=os.path.basename(path), is_ignored=ignore_patterns_manager.should_ignore(path), parent=parent)
         
         for item_path in self._list_directory_items(path):
             node = self._create_node(item_path, ignore_patterns_manager, result)
@@ -87,8 +84,8 @@ class CodebaseAnalysis:
                 else:
                     result.children.append(node)
         
-        root = parent is None
-        if root and ignore_top_files > 0:
+        is_root_dir = parent is None
+        if is_root_dir and ignore_top_files > 0:
             largest_files = result.get_largest_files(ignore_top_files)
             print(f"Ignoring {ignore_top_files} largest files:")
             for file in largest_files:
