@@ -38,18 +38,15 @@ class CodebaseAnalysis:
         file_size = os.path.getsize(item_path)
         if self.is_text_file(item_path):
              content = self.read_file_content(item_path)
-             print(f"Debug: Text file {item_path}, size: {file_size}, content size: {len(content)}")
         else:
              content = "[Non-text file]"
-             print(f"Debug: Non-text file {item_path}, size: {file_size}")
         return TextFileAnalysis(name=os.path.basename(item_path), file_content=content, is_ignored=is_ignored, parent=parent)
     
     def _create_node(self, item_path, ignore_patterns_manager, parent):
         """Creates a node (file or directory) for a given path."""
 
         is_ignored = ignore_patterns_manager.should_ignore(item_path)
-        print(f"Debug: Checking {item_path}")
-
+        
         if os.path.isfile(item_path):
             try:
               return self._analyze_file(item_path, is_ignored, parent)

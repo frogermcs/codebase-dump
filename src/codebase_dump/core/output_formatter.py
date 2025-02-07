@@ -35,7 +35,10 @@ class OutputFormatterBase:
     
     def generate_tree_string_for_LLM(self, node: NodeAnalysis):
         """Generates a string representation of the directory tree readable by LLM."""
-        
+
+        if node.is_ignored:
+            return ""
+
         result = "- " + node.get_full_path()
 
         if isinstance(node, DirectoryAnalysis):
@@ -43,9 +46,6 @@ class OutputFormatterBase:
 
         if isinstance(node, TextFileAnalysis):
             result += f" ({node.size} bytes)"
-
-        if node.is_ignored:
-            result += " [Status: IGNORED]"
 
         result += "\n"
 
@@ -91,7 +91,7 @@ class OutputFormatterBase:
 
         output = ""
         for file in files:
-             output += f"{prefix}- {file.get_full_path()} ({file.size} bytes)\n"
+             output += f"{prefix}- {file.get_full_path()} ({file.size / 1024:.2f} kB)\n"
 
         return output
 
@@ -101,7 +101,7 @@ class OutputFormatterBase:
 
         output = ""
         for directory in directories:
-            output += f"{prefix}- {directory.get_full_path()} ({directory.size} bytes)\n"
+            output += f"{prefix}- {directory.get_full_path()} ({directory.size / 1024:.2f} kB)\n"
         return output
     
 class PlainTextOutputFormatter(OutputFormatterBase):
