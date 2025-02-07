@@ -88,6 +88,5 @@ class CodebaseAnalysis:
             for file in largest_files:
                 print(f"  {file.get_full_path()} ({file.size} bytes)")
                 file.is_ignored = True
-                print(file)
 
         return result
