@@ -33,6 +33,28 @@ class OutputFormatterBase:
                 result += self.generate_tree_string(child, prefix, i == len(children) - 1, show_size, show_ignored)
         return result
     
+    def generate_tree_string_for_LLM(self, node: NodeAnalysis):
+        """Generates a string representation of the directory tree readable by LLM."""
+        
+        result = "- " + node.get_full_path()
+
+        if isinstance(node, DirectoryAnalysis):
+            result += "/"
+
+        if isinstance(node, TextFileAnalysis):
+            result += f" ({node.size} bytes)"
+
+        if node.is_ignored:
+            result += " [Status: IGNORED]"
+
+        result += "\n"
+
+        if isinstance(node, DirectoryAnalysis):
+            children = node.children
+            for i, child in enumerate(children):
+                result += self.generate_tree_string_for_LLM(child)
+        return result
+
     def generate_content_string(self, data: NodeAnalysis):
         """Generates a structured representation of file contents."""
         content = []
@@ -88,16 +110,17 @@ class PlainTextOutputFormatter(OutputFormatterBase):
     
     def format(self, data: DirectoryAnalysis) -> str:
         output = f"Parsed codebase for the project: {data.name}\n"
+        output = f"Purpose: This document provides a parsed representation of the codebase for analysis and understanding by an LLM. The LLM should use this information to provide code audits for software engineers. The detailed requests for audits will be provided later.\n\n"
         output += "\nDirectory Structure:\n"
-        output += self.generate_tree_string(data, show_size=True, show_ignored=True)
+        output += self.generate_tree_string_for_LLM(data)
         output += self.generate_summary_string(data)
-        output += "\nFile Contents:\n"
+        output += "\nFile Contents:\n\n"
         for file in self.generate_content_string(data):
-            output += f"\n{'=' * 50}\n"
             output += f"File: {file['path']}\n"
-            output += f"{'=' * 50}\n"
+            output += f"---\n"
+            output += f"Content:\n"
             output += file['content']
-            output += "\n"
+            output += "\n\n"
         return output
 
 class MarkdownOutputFormatter(OutputFormatterBase):
@@ -105,17 +128,19 @@ class MarkdownOutputFormatter(OutputFormatterBase):
         return ".md"
     
     def format(self, data: DirectoryAnalysis) -> str:
-        output = f"# Parsed codebase for the project: {data.name}\n\n"
+        output = f"# Parsed codebase for the project: {data.name}\n"
+        output = f"# Purpose: This document provides a parsed representation of the codebase for analysis and understanding by an LLM. The LLM should use this information to provide code audits for software engineers. The detailed requests for audits will be provided later.\n\n"
         output += "## Directory Structure\n\n"
-        output += "```\n"
-        output += self.generate_tree_string(data, show_size=True, show_ignored=True)
-        output += "```\n\n"
+        output += self.generate_tree_string_for_LLM(data)
+        output += "\n\n"
         output += "## Summary\n\n"
         output += f"- Total files: {data.get_file_count()}\n"
         output += f"- Total directories: {data.get_dir_count()}\n"
         output += f"- Total text file size (including ignored): {data.size / 1024:.2f} KB\n"
         output += f"- Total tokens: {data.get_total_tokens()}\n"
         output += f"- Analyzed text content size: {data.get_non_ignored_text_content_size() / 1024:.2f} KB\n\n"
+        output += f"Top largest non-ignored files:\n{self.generate_top_files_string(data.get_largest_files())}\n"
+        output += f"Top largest non-ignored directories:\n{self.generate_top_directories_string(data.get_largest_directories())}\n"       
         output += "## File Contents\n\n"
         for file in self.generate_content_string(data):
             output += f"### {file['path']}\n\n```\n{file['content']}\n```\n\n"
