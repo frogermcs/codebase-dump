@@ -38,21 +38,15 @@ class CodebaseAnalysis:
         file_size = os.path.getsize(item_path)
         if self.is_text_file(item_path):
              content = self.read_file_content(item_path)
-             print(f"Debug: Text file {item_path}, size: {file_size}, content size: {len(content)}")
         else:
              content = "[Non-text file]"
-             print(f"Debug: Non-text file {item_path}, size: {file_size}")
         return TextFileAnalysis(name=os.path.basename(item_path), file_content=content, is_ignored=is_ignored, parent=parent)
     
     def _create_node(self, item_path, ignore_patterns_manager, parent):
         """Creates a node (file or directory) for a given path."""
 
         is_ignored = ignore_patterns_manager.should_ignore(item_path)
-        print(f"Debug: Checking {item_path}, ignored: {is_ignored}")
-
-        if is_ignored:
-             return None
-
+        
         if os.path.isfile(item_path):
             try:
               return self._analyze_file(item_path, is_ignored, parent)
@@ -74,8 +68,8 @@ class CodebaseAnalysis:
 
         if path == ".":
             path = os.getcwd()
-
-        result = DirectoryAnalysis(name=os.path.basename(path), parent=parent)
+        
+        result = DirectoryAnalysis(name=os.path.basename(path), is_ignored=ignore_patterns_manager.should_ignore(path), parent=parent)
         
         for item_path in self._list_directory_items(path):
             node = self._create_node(item_path, ignore_patterns_manager, result)
@@ -87,13 +81,12 @@ class CodebaseAnalysis:
                 else:
                     result.children.append(node)
         
-        root = parent is None
-        if root and ignore_top_files > 0:
+        is_root_dir = parent is None
+        if is_root_dir and ignore_top_files > 0:
             largest_files = result.get_largest_files(ignore_top_files)
             print(f"Ignoring {ignore_top_files} largest files:")
             for file in largest_files:
                 print(f"  {file.get_full_path()} ({file.size} bytes)")
                 file.is_ignored = True
-                print(file)
 
         return result

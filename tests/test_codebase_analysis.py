@@ -6,20 +6,6 @@ from codebase_dump.core.models import DirectoryAnalysis, TextFileAnalysis
 
 class TestCodebaseAnalysis(unittest.TestCase):
 
-     @patch("codebase_dump.core.codebase_analysis.os.listdir", return_value=["file1.txt", "file2.txt"])
-     @patch('codebase_dump.core.codebase_analysis.os.path.isfile', return_value=True)
-     @patch('codebase_dump.core.codebase_analysis.os.path.getsize', return_value=10)
-     @patch("builtins.open", new_callable=mock_open, read_data="Loremm ipsum dolor sit amet")
-     def test_analyze_directory_basic(self, mock_read, mock_file, mock_isfile, mock):
-          ignore_manager = IgnorePatternManager(".", load_default_ignore_patterns=False)
-          codebase_analysis = CodebaseAnalysis()
-          result = codebase_analysis.analyze_directory(".", ignore_manager, ".")
-          self.assertEqual(len(result.children), 2)
-          self.assertEqual(result.children[0].name, "file1.txt")
-          self.assertEqual(result.children[1].name, "file2.txt")
-          self.assertEqual(result.children[0].parent, result)
-          self.assertEqual(result.children[1].parent, result)
-
 
      @patch("codebase_dump.core.codebase_analysis.os.listdir", return_value=["file1.txt", "file2.py"])
      @patch('codebase_dump.core.codebase_analysis.os.path.isfile', return_value=True)
@@ -29,7 +15,9 @@ class TestCodebaseAnalysis(unittest.TestCase):
           ignore_manager = IgnorePatternManager(".", load_default_ignore_patterns=False, extra_ignore_patterns=["*.py"])
           codebase_analysis = CodebaseAnalysis()
           result = codebase_analysis.analyze_directory(".", ignore_manager, ".")
-          self.assertEqual(len(result.children), 1)
+
+          self.assertEqual(len(result.get_non_ignored_children()), 1)
+          self.assertEqual(len(result.get_all_children()), 2)
           self.assertEqual(result.children[0].name, "file1.txt")
 
 
@@ -44,17 +32,19 @@ class TestCodebaseAnalysis(unittest.TestCase):
           with patch("codebase_dump.core.codebase_analysis.os.listdir", return_value=["dir", "file1.txt", "file2.py"]):
                with patch('codebase_dump.core.codebase_analysis.os.path.isdir', side_effect=[True, False, False]):
                     result = codebase_analysis.analyze_directory(".", ignore_manager, ".")
-                    self.assertEqual(len(result.children), 2)
-                    self.assertEqual(result.children[0].name, "dir")
-                    self.assertEqual(result.children[1].name, "file1.txt")
+                    self.assertEqual(len(result.get_non_ignored_children()), 2)
+                    self.assertEqual(len(result.get_all_children()), 3)
+                    self.assertEqual(result.get_non_ignored_children()[0].name, "dir")
+                    self.assertEqual(result.get_non_ignored_children()[1].name, "file1.txt")
 
 
+     @patch("os.getcwd", return_value="dir")
      @patch("os.listdir", return_value=["file1.txt", "file2.py"])
      @patch("os.path.isfile", side_effect=lambda x: not x.endswith("/") and not x.endswith("dir"))
      @patch("os.path.isdir", side_effect=lambda x: x.endswith("dir"))
      @patch("os.path.getsize", return_value=1024)
      @patch("builtins.open", new_callable=mock_open, read_data="Sample file content")
-     def test_analyze_directory_basic(self, mock_open, mock_getsize, mock_isdir, mock_isfile, mock_listdir):
+     def test_analyze_directory_basic(self, mock_open, mock_getsize, mock_isdir, mock_isfile, mock_listdir, mock_getcwd):
           ignore_manager = IgnorePatternManager(".", load_default_ignore_patterns=False)
           analysis = CodebaseAnalysis()
 
@@ -78,7 +68,8 @@ class TestCodebaseAnalysis(unittest.TestCase):
           analysis = CodebaseAnalysis()
           result = analysis.analyze_directory(".", ignore_manager, ".")
 
-          self.assertEqual(len(result.children), 0)
+          self.assertEqual(len(result.get_all_children()), 2)
+          self.assertEqual(len(result.get_non_ignored_children()), 0)
 
      @patch("os.listdir", side_effect=FileNotFoundError)
      def test_list_directory_items_file_not_found(self, mock_listdir):
