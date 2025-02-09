@@ -109,8 +109,7 @@ class PlainTextOutputFormatter(OutputFormatterBase):
         return ".txt"
     
     def format(self, data: DirectoryAnalysis) -> str:
-        output = f"Parsed codebase for the project: {data.name}\n"
-        output = f"Purpose: This document provides a parsed representation of the codebase for analysis and understanding by an LLM. The LLM should use this information to provide code audits for software engineers. The detailed requests for audits will be provided later.\n\n"
+        output = f"Parsed codebase for the project: {data.name}\n\n"
         output += "\nDirectory Structure:\n"
         output += self.generate_tree_string_for_LLM(data)
         output += self.generate_summary_string(data)
@@ -128,8 +127,7 @@ class MarkdownOutputFormatter(OutputFormatterBase):
         return ".md"
     
     def format(self, data: DirectoryAnalysis) -> str:
-        output = f"# Parsed codebase for the project: {data.name}\n"
-        output = f"# Purpose: This document provides a parsed representation of the codebase for analysis and understanding by an LLM. The LLM should use this information to provide code audits for software engineers. The detailed requests for audits will be provided later.\n\n"
+        output = f"# Parsed codebase for the project: {data.name}\n\n"
         output += "## Directory Structure\n\n"
         output += self.generate_tree_string_for_LLM(data)
         output += "\n\n"
