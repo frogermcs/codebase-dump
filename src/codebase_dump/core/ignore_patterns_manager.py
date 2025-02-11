@@ -35,8 +35,7 @@ class IgnorePatternManager:
         self.ignore_patterns_as_str = set()
         
         self.init_ignore_patterns()
-        print("Ignore Patterns: ", self.ignore_patterns_as_str)
-
+        
         if base_path == ".":
             self.base_path = os.getcwd()
         else:

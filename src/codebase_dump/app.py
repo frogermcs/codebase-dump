@@ -46,7 +46,7 @@ def main():
     
     total_size = data.size
     estimated_output_size = data.get_non_ignored_text_content_size()
-    estimated_output_size += data.get_file_count() * 100  # Assume 100 bytes per file for structure
+    estimated_output_size += len(data.get_all_non_ignored_files()) * 100  # Assume 100 bytes per file for structure
     estimated_output_size += 1000  # Add 1KB for summary
     print(f"Estimated output size: {estimated_output_size / 1024:.2f} KB")
     if estimated_output_size / 1024 > args.max_size:
@@ -74,6 +74,8 @@ def main():
     print("Analysis Summary\n")
     print(output_formatter.generate_tree_string(data, show_ignored=False))
     print(output_formatter.generate_summary_string(data))
+    print("Ignore summary:\n")
+    print(output_formatter.generate_ignored_files_summary(data, ignore_patterns_manager.ignore_patterns_as_str))
 
     try:
         from codebase_dump._version import __version__ as app_version

@@ -73,17 +73,25 @@ class OutputFormatterBase:
         return content
     
     def generate_summary_string(self, data: DirectoryAnalysis):
-        summary = "\nSummary:\n"
-        summary += f"Total files analyzed: {data.get_file_count()}\n"
-        summary += f"Total directories analyzed: {data.get_dir_count()}\n"
-        summary += f"Estimated output size: {data.size / 1024:.2f} KB\n"
-        summary += f"Actual analyzed size: {data.get_non_ignored_text_content_size() / 1024:.2f} KB\n"
-        summary += f"Total tokens: {data.get_total_tokens()}\n"
-        summary += f"Actual text content size: {data.size / 1024:.2f} KB\n"
-        summary += f"Top largest non-ignored files:\n{self.generate_top_files_string(data.get_largest_files())}\n"
-        summary += f"Top largest non-ignored directories:\n{self.generate_top_directories_string(data.get_largest_directories())}\n"       
+        output = ""
+        output += f"- Total files: {len(data.get_all_non_ignored_files())}\n"
+        output += f"- Total directories: {data.get_non_ignored_dir_count()}\n"
+        output += f"- Total text file size (including ignored): {data.size / 1024:.2f} KB\n"
+        output += f"- Total tokens: {data.get_total_tokens()}\n"
+        output += f"- Analyzed text content size: {data.get_non_ignored_text_content_size() / 1024:.2f} KB\n\n"
+        output += f"Top largest non-ignored files:\n{self.generate_top_files_string(data.get_largest_files())}\n"
+        output += f"Top largest non-ignored directories:\n{self.generate_top_directories_string(data.get_largest_directories())}\n"       
 
-        return summary
+        return output
+    
+    def generate_ignored_files_summary(self, data: DirectoryAnalysis, ignore_patterns: set):
+        output = ""
+        output += f"- Files ignored during parsing: {len(data.get_all_ignored_files())}\n"
+        output += f"- Patters used to ignore files: {ignore_patterns}\n"
+    
+
+        return output
+
 
     def generate_top_files_string(self, files: List[TextFileAnalysis], prefix=""):
         if not files:
@@ -112,6 +120,8 @@ class PlainTextOutputFormatter(OutputFormatterBase):
         output = f"Parsed codebase for the project: {data.name}\n\n"
         output += "\nDirectory Structure:\n"
         output += self.generate_tree_string_for_LLM(data)
+        output += "\n\n"
+        output += "Summary\n\n"
         output += self.generate_summary_string(data)
         output += "\nFile Contents:\n\n"
         for file in self.generate_content_string(data):
@@ -132,13 +142,7 @@ class MarkdownOutputFormatter(OutputFormatterBase):
         output += self.generate_tree_string_for_LLM(data)
         output += "\n\n"
         output += "## Summary\n\n"
-        output += f"- Total files: {data.get_file_count()}\n"
-        output += f"- Total directories: {data.get_dir_count()}\n"
-        output += f"- Total text file size (including ignored): {data.size / 1024:.2f} KB\n"
-        output += f"- Total tokens: {data.get_total_tokens()}\n"
-        output += f"- Analyzed text content size: {data.get_non_ignored_text_content_size() / 1024:.2f} KB\n\n"
-        output += f"Top largest non-ignored files:\n{self.generate_top_files_string(data.get_largest_files())}\n"
-        output += f"Top largest non-ignored directories:\n{self.generate_top_directories_string(data.get_largest_directories())}\n"       
+        output += self.generate_summary_string(data)
         output += "## File Contents\n\n"
         for file in self.generate_content_string(data):
             output += f"### {file['path']}\n\n```\n{file['content']}\n```\n\n"
