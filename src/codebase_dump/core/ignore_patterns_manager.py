@@ -26,7 +26,11 @@ class IgnorePatternManager:
                  load_gitignore=True, 
                  load_cdigestignore=True,
                  extra_ignore_patterns=set()):
-        self.base_path = base_path
+        if base_path == ".":
+            self.base_path = os.getcwd()
+        else:
+            self.base_path = base_path
+            
         self.load_default_ignore_patterns=load_default_ignore_patterns
         self.load_gitignore=load_gitignore
         self.load_cdigestignore = load_cdigestignore
@@ -36,11 +40,7 @@ class IgnorePatternManager:
         
         self.init_ignore_patterns()
         
-        if base_path == ".":
-            self.base_path = os.getcwd()
-        else:
-            self.base_path = base_path
-
+        self.parser = get_parser_from_list(self.ignore_patterns_as_str, base_dir=self.base_path)
 
     def init_ignore_patterns(self):
         """Initializes the ignore patterns based on the configuration."""
@@ -71,5 +71,4 @@ class IgnorePatternManager:
                 self.ignore_patterns_as_str.add(line)
    
     def should_ignore(self, path):
-        parser = get_parser_from_list(self.ignore_patterns_as_str, base_dir=self.base_path)
-        return parser.match(path)
+        return self.parser.match(path)
