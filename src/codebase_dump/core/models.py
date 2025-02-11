@@ -68,39 +68,23 @@ class DirectoryAnalysis(NodeAnalysis):
                 all_children.extend(child.get_all_children())
         return all_children
     
-    def get_non_ignored_children(self) -> List[NodeAnalysis]:
-        non_ignored_children = []
-        for child in self.children:
-            if not child.is_ignored:
-                non_ignored_children.append(child)
-        return non_ignored_children
-
     @property
     def type(self) -> str:
         return "directory"
 
-    def get_file_count(self) -> int:
-        count = 0
-        for child in self.children:
-            if child.is_ignored:
-                continue
-
-            if isinstance(child, TextFileAnalysis):
-                count += 1
-            if isinstance(child, DirectoryAnalysis):
-                count += child.get_file_count()
-        return count
+    def get_non_ignored_file_count(self) -> int:
+        return len(self.get_all_non_ignored_files())
     
-    def get_dir_count(self) -> int:
-       count = 0
-       for child in self.children:
-           if child.is_ignored:
-               continue 
-           
-           if isinstance(child, DirectoryAnalysis):
-               count += 1 + child.get_dir_count()
-       return count
-
+    def get_non_ignored_dir_count(self) -> int:
+       return len(self.get_all_non_ignored_directories())
+    
+    def get_all_children(self) -> List[NodeAnalysis]:
+        all_children = []
+        for child in self.children:
+            all_children.append(child)
+            if isinstance(child, DirectoryAnalysis):
+                all_children.extend(child.get_all_children())
+        return all_children
 
     def get_total_tokens(self) -> int:
         tokens = 0
@@ -137,35 +121,43 @@ class DirectoryAnalysis(NodeAnalysis):
                size += child.get_non_ignored_text_content_size()
         return size
     
-    def _get_all_non_ignored_files(self):
-            files = []
-            for child in self.get_non_ignored_children():
-                if isinstance(child, TextFileAnalysis):
-                   files.append(child)
-                if isinstance(child, DirectoryAnalysis):
-                   files.extend(child._get_all_non_ignored_files())
-            return files
-            
+    def get_all_non_ignored_files(self):
+        files = []
+        for child in self.get_all_children():
+            if isinstance(child, TextFileAnalysis) and not child.is_ignored:
+                files.append(child)
+        return files
+    
+    def get_all_ignored_files(self):
+        files = []
+        for child in self.get_all_children():
+            if isinstance(child, TextFileAnalysis) and child.is_ignored:
+                files.append(child)
+        return files
+
+    def get_all_non_ignored_directories(self):
+        directories = []
+        for child in self.get_all_children():
+            if isinstance(child, DirectoryAnalysis) and not child.is_ignored:
+                directories.append(child)
+        return directories
+    
+    def get_all_ignored_directories(self):
+        directories = []
+        for child in self.get_all_children():
+            if isinstance(child, DirectoryAnalysis) and child.is_ignored:
+                directories.append(child)
+        return directories
 
     def get_largest_files(self, n=10) -> List[TextFileAnalysis]:
         """Returns a list of the n largest non-ignored files in this directory and its subdirectories."""
-        all_files = self._get_all_non_ignored_files()
+        all_files = self.get_all_non_ignored_files()
         sorted_files = sorted(all_files, key=lambda file: file.size, reverse=True)
         return sorted_files[:n]
 
-    def _get_all_non_ignored_directories(self):
-        directories = []
-        for child in self.get_non_ignored_children():
-            if isinstance(child, DirectoryAnalysis):
-                directories.append(child)
-                directories.extend(child._get_all_non_ignored_directories())
-
-        return directories
-
-
     def get_largest_directories(self, n=10) -> List["DirectoryAnalysis"]:
         """Returns a list of the n largest non-ignored directories in this directory and its subdirectories."""
-        all_directories = self._get_all_non_ignored_directories()
+        all_directories = self.get_all_non_ignored_directories()
         sorted_directories = sorted(all_directories, key=lambda directory: directory.size, reverse=True)
         return sorted_directories[:n]
 
@@ -178,7 +170,7 @@ class DirectoryAnalysis(NodeAnalysis):
             "is_ignored": self.is_ignored,
             "non_ignored_text_content_size": self.get_non_ignored_text_content_size(),
             "total_tokens": self.get_total_tokens(),
-            "file_count": self.get_file_count(),
-            "dir_count": self.get_dir_count(),
+            "file_count": self.get_non_ignored_file_count(),
+            "dir_count": self.get_non_ignored_dir_count(),
             "children": [child.to_dict() for child in self.children]
         }

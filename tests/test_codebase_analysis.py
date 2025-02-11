@@ -16,7 +16,7 @@ class TestCodebaseAnalysis(unittest.TestCase):
           codebase_analysis = CodebaseAnalysis()
           result = codebase_analysis.analyze_directory(".", ignore_manager, ".")
 
-          self.assertEqual(len(result.get_non_ignored_children()), 1)
+          self.assertEqual(len(result.get_all_non_ignored_files()), 1)
           self.assertEqual(len(result.get_all_children()), 2)
           self.assertEqual(result.children[0].name, "file1.txt")
 
@@ -32,10 +32,10 @@ class TestCodebaseAnalysis(unittest.TestCase):
           with patch("codebase_dump.core.codebase_analysis.os.listdir", return_value=["dir", "file1.txt", "file2.py"]):
                with patch('codebase_dump.core.codebase_analysis.os.path.isdir', side_effect=[True, False, False]):
                     result = codebase_analysis.analyze_directory(".", ignore_manager, ".")
-                    self.assertEqual(len(result.get_non_ignored_children()), 2)
+                    self.assertEqual(len(result.get_all_non_ignored_files()), 2)
                     self.assertEqual(len(result.get_all_children()), 3)
-                    self.assertEqual(result.get_non_ignored_children()[0].name, "dir")
-                    self.assertEqual(result.get_non_ignored_children()[1].name, "file1.txt")
+                    self.assertEqual(result.get_all_non_ignored_files()[0].name, "dir")
+                    self.assertEqual(result.get_all_non_ignored_files()[1].name, "file1.txt")
 
 
      @patch("os.getcwd", return_value="dir")
@@ -69,7 +69,7 @@ class TestCodebaseAnalysis(unittest.TestCase):
           result = analysis.analyze_directory(".", ignore_manager, ".")
 
           self.assertEqual(len(result.get_all_children()), 2)
-          self.assertEqual(len(result.get_non_ignored_children()), 0)
+          self.assertEqual(len(result.get_all_non_ignored_files()), 0)
 
      @patch("os.listdir", side_effect=FileNotFoundError)
      def test_list_directory_items_file_not_found(self, mock_listdir):
