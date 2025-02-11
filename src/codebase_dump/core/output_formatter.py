@@ -6,7 +6,7 @@ class OutputFormatterBase:
     def output_file_extension(self):
         raise NotImplemented
 
-    def format(self, data: DirectoryAnalysis) -> str:
+    def format(self, data: DirectoryAnalysis, ignore_patterns: set) -> str:
         raise NotImplemented
     
     def generate_tree_string(self, node: NodeAnalysis, prefix="", is_last=True, show_size=False, show_ignored=False):
@@ -85,11 +85,9 @@ class OutputFormatterBase:
         return output
     
     def generate_ignored_files_summary(self, data: DirectoryAnalysis, ignore_patterns: set):
-        output = ""
-        output += f"- Files ignored during parsing: {len(data.get_all_ignored_files())}\n"
-        output += f"- Patters used to ignore files: {ignore_patterns}\n"
-    
-
+        output = "During the analysis, some files were ignored:\n"
+        output += f"- No of files ignored during parsing: {len(data.get_all_ignored_files())}\n"
+        output += f"- Patterns used to ignore files: {ignore_patterns}\n"
         return output
 
 
@@ -116,14 +114,16 @@ class PlainTextOutputFormatter(OutputFormatterBase):
     def output_file_extension(self):
         return ".txt"
     
-    def format(self, data: DirectoryAnalysis) -> str:
+    def format(self, data: DirectoryAnalysis, ignore_patterns: set) -> str:
         output = f"Parsed codebase for the project: {data.name}\n\n"
         output += "\nDirectory Structure:\n"
         output += self.generate_tree_string_for_LLM(data)
         output += "\n\n"
         output += "Summary\n\n"
         output += self.generate_summary_string(data)
-        output += "\nFile Contents:\n\n"
+        output += "Ignore summary:\n"
+        output += self.generate_ignored_files_summary(data, ignore_patterns)
+        output += "Files:\n\n"
         for file in self.generate_content_string(data):
             output += f"File: {file['path']}\n"
             output += f"---\n"
@@ -136,14 +136,15 @@ class MarkdownOutputFormatter(OutputFormatterBase):
     def output_file_extension(self):
         return ".md"
     
-    def format(self, data: DirectoryAnalysis) -> str:
+    def format(self, data: DirectoryAnalysis, ignore_patterns: set) -> str:
         output = f"# Parsed codebase for the project: {data.name}\n\n"
-        output += "## Directory Structure\n\n"
+        output += "\n## Directory Structure\n"
         output += self.generate_tree_string_for_LLM(data)
-        output += "\n\n"
-        output += "## Summary\n\n"
+        output += "\n## Summary\n"
         output += self.generate_summary_string(data)
-        output += "## File Contents\n\n"
+        output += "\n## Ignore summary:\n"
+        output += self.generate_ignored_files_summary(data, ignore_patterns)
+        output += "\n## Files:\n"
         for file in self.generate_content_string(data):
             output += f"### {file['path']}\n\n```\n{file['content']}\n```\n\n"
         return output

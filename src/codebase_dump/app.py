@@ -61,7 +61,7 @@ def main():
     else:
         output_formatter = PlainTextOutputFormatter()
 
-    output = output_formatter.format(data)
+    output = output_formatter.format(data, ignore_patterns_manager.ignore_patterns_as_str)
 
     # Save the output to a file
     file_name = args.file or f"{os.path.basename(args.path)}_codebase_dump{output_formatter.output_file_extension()}"
