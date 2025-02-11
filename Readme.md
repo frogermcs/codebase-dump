@@ -48,7 +48,6 @@ codebase-dump <path_to_codebase> -f <output_filename> -o <output_format>
 | `path_to_directory` | Path to the directory you want to analyze |
 | `-o, --output-format` | Output format (text, markdown). Default: text |
 | `-f, --file` | Output file name |
-| `--max-size` | Maximum allowed text content size in KB (default: 10240 KB) |
 | `--ignore-top-large-files` | Number of largest files to ignore (default: 0) |
 | `--audit-upload` | Send the output to the audits API as defined by `--audit-base-url` parameter |
 | `--audit-base-url`  | API Base URL to send the audit to (default: https://codeaudits.ai/) |
