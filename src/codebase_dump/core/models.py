@@ -134,7 +134,7 @@ class DirectoryAnalysis(NodeAnalysis):
             if isinstance(child, TextFileAnalysis) and child.file_content:
                 size += len(child.file_content)
             elif isinstance(child, DirectoryAnalysis):
-               size += child.size
+               size += child.get_non_ignored_text_content_size()
         return size
     
     def _get_all_non_ignored_files(self):

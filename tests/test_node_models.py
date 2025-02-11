@@ -29,7 +29,7 @@ class TestNodeAnalysis(unittest.TestCase):
             directory = DirectoryAnalysis("test")
             text_file = TextFileAnalysis("test")
             text_file.file_content = "length of this string is 27"
-
+            
             directory.children.append(text_file)
             self.assertEqual(directory.get_file_count(), 1)
             self.assertEqual(directory.get_dir_count(), 0)
@@ -80,6 +80,22 @@ class TestNodeAnalysis(unittest.TestCase):
             directory.children.append(sub_directory)
             self.assertEqual(directory.get_file_count(), 0)
             self.assertEqual(directory.get_dir_count(), 0)
+            self.assertEqual(directory.get_non_ignored_text_content_size(), 0)
+            self.assertEqual(directory.size, 27)
+
+        def test_directory_with_one_ignored_sub_sub_directory(self):
+            directory = DirectoryAnalysis("test")
+            sub_directory = DirectoryAnalysis("test")
+            sub_sub_directory = DirectoryAnalysis("test")
+            sub_sub_directory.is_ignored = True
+            text_file = TextFileAnalysis("test")
+            text_file.file_content = "length of this string is 27"
+            directory.children.append(sub_directory)
+            sub_directory.children.append(sub_sub_directory)
+            sub_sub_directory.children.append(text_file)
+            
+            self.assertEqual(directory.get_file_count(), 0)
+            self.assertEqual(directory.get_dir_count(), 1)
             self.assertEqual(directory.get_non_ignored_text_content_size(), 0)
             self.assertEqual(directory.size, 27)
 
