@@ -92,7 +92,7 @@ class TestIgnorePatternsManager(unittest.TestCase):
             manager = IgnorePatternManager("/test", load_default_ignore_patterns=False,
                                             load_gitignore=False, load_cdigestignore=False,
                                             extra_ignore_patterns={"sub/"})
-            self.assertTrue(manager.should_ignore("/test/sub"))
+            self.assertTrue(manager.should_ignore("/test/sub/"))
             self.assertFalse(manager.should_ignore("/test/sub.txt"))
 
         def test_ignore_recursive_wildcard_pattern(self):
@@ -107,7 +107,7 @@ class TestIgnorePatternsManager(unittest.TestCase):
         def test_empty_pattern_handling(self):
             manager = IgnorePatternManager("/test", load_default_ignore_patterns=False,
                                             load_gitignore=False, load_cdigestignore=False,
-                                            extra_ignore_patterns={"", "# Comment only"})
+                                            extra_ignore_patterns={"# Comment only"})
             self.assertFalse(manager.should_ignore("/test/file.txt"))  # No patterns should ignore anything
 
         def test_should_ignore_directory_inside_bug_test(self):

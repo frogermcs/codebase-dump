@@ -1,2 +1,2 @@
 tiktoken>=0.8.0
-gitignore_parser>=0.1.11
+py_walk>=0.3.3

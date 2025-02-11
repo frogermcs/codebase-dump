@@ -1,5 +1,6 @@
 import os
-import gitignore_parser
+
+from py_walk import get_parser_from_list
 
 # TODO: Add support for negation patterns
 
@@ -32,9 +33,14 @@ class IgnorePatternManager:
         self.extra_ignore_patterns = extra_ignore_patterns
 
         self.ignore_patterns_as_str = set()
-        self.ignore_rules = set()
-
+        
         self.init_ignore_patterns()
+        print("Ignore Patterns: ", self.ignore_patterns_as_str)
+
+        if base_path == ".":
+            self.base_path = os.getcwd()
+        else:
+            self.base_path = base_path
 
 
     def init_ignore_patterns(self):
@@ -42,14 +48,10 @@ class IgnorePatternManager:
         if self.load_default_ignore_patterns:
             for pattern in IgnorePatternManager.DEFAULT_IGNORE_PATTERNS:
                 self.ignore_patterns_as_str.add(pattern)
-                rule = gitignore_parser.rule_from_pattern(pattern)
-                self.ignore_rules.add(rule)
         
         if self.extra_ignore_patterns:
             for pattern in self.extra_ignore_patterns:
                 self.ignore_patterns_as_str.add(pattern)
-                rule = gitignore_parser.rule_from_pattern(pattern, base_path=self.base_path)
-                self.ignore_rules.add(rule)
         
         cdigestignore_path = os.path.join(self.base_path, '.cdigestignore')
         if self.load_cdigestignore and os.path.exists(cdigestignore_path):
@@ -66,15 +68,9 @@ class IgnorePatternManager:
                 line = line.strip()
                 if not line or line.startswith("#"):
                     continue
-                
-                rule = gitignore_parser.rule_from_pattern(line, base_path=self.base_path)
-                self.ignore_rules.add(rule)
+                                
                 self.ignore_patterns_as_str.add(line)
-
+   
     def should_ignore(self, path):
-        if self.ignore_rules:
-            for rule in self.ignore_rules:
-                if rule and rule.match(path) and not rule.negation:
-                    return True
-        
-        return False
+        parser = get_parser_from_list(self.ignore_patterns_as_str, base_dir=self.base_path)
+        return parser.match(path)

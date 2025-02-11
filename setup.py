@@ -16,7 +16,7 @@ setup(
     author_email="mirek@practicalengineering.management, kamil@stanuch.eu",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    install_requires=["tiktoken", "gitignore_parser"],
+    install_requires=["tiktoken", "py-walk"],
     extras_require={
         "dev": ["pytest", "twine"]
     },
